@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://al-karram-kebab.vercel.app/sitemap.xml
