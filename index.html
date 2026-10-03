@@ -9,7 +9,7 @@
     <title>Al Karram Kebab | Comida Rápida y Kebab a Domicilio en Montilla</title>
 
     <meta name="description"
-        content="Al Karram Kebab en Montilla (Córdoba). Disfruta de Durum, Doner Pita, Pizzas Turcas, Hamburguesas y Menús Combos. Reparto a domicilio de 20:00 a 00:00. Tel: 611 168 163.">
+        content="Al Karram Kebab en Montilla (Córdoba). Disfruta de Durum, Doner Pita, Pizzas Turcas, Hamburguesas y Menús Combos. Horario: L-J 20:00-00:00, V-D 19:00-02:00. Reparto a domicilio de 20:00 a 00:00. Tel: 611 168 163.">
     <meta name="keywords"
         content="Al Karram Kebab, Kebab Montilla, Durum Kebab, Doner Pita, Comida a domicilio Montilla, Pizza Turca, Hamburguesas Montilla">
     <meta name="author" content="Al Karram Kebab">
@@ -17,7 +17,7 @@
     <!-- Google Fonts: Poppins & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -32,13 +32,17 @@
 <div class="top-bar">
     <div class="top-bar-inner">
         <div class="top-bar-left">
-            <span><i class="fa-solid fa-location-dot"></i> Calle Corredera 46, Local 3, Montilla (Córdoba)</span>
+            <span class="live-status-badge" id="topBarStatusBadge">
+                <span class="status-dot"></span>
+                <span class="status-text" data-i18n="status.checking">Comprobando horario...</span>
+            </span>
             <span class="dot-sep">•</span>
-            <span><i class="fa-solid fa-motorcycle"></i> Domicilio: <strong>20:00 a 00:00 Noche</strong></span>
+            <span><i class="fa-solid fa-location-dot"></i> <span data-i18n="topBar.address">Calle Corredera 46, Local 3, Montilla (Córdoba)</span></span>
+            <span class="dot-sep">•</span>
+            <span><i class="fa-solid fa-motorcycle"></i> <span data-i18n="topBar.delivery" id="topBarDeliveryText">Domicilio: <strong>20:00 a 00:00 Noche</strong></span></span>
         </div>
         <div class="top-bar-right">
-            <span><i class="fa-solid fa-phone"></i> Pedidos: 
-                <a href="tel:611168163">611 168 163</a> / <a href="tel:611696343">611 696 343</a>
+            <span><i class="fa-solid fa-phone"></i> <span data-i18n="topBar.orders">Pedidos:</span> <a href="tel:611168163">611 168 163</a> / <a href="tel:611696343">611 696 343</a>
             </span>
         </div>
     </div>
@@ -61,15 +65,28 @@
         <!-- Desktop Navigation -->
         <nav id="navbar" aria-label="Navegación principal">
             <ul>
-                <li><a href="#" class="nav-link active">Inicio</a></li>
-                <li><a href="#menu" class="nav-link">Menú</a></li>
-                <li><a href="#combos" class="nav-link">Combos</a></li>
-                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+                <li><a href="#" class="nav-link active" data-i18n="nav.home">Inicio</a></li>
+                <li><a href="#menu" class="nav-link" data-i18n="nav.menu">Menú</a></li>
+                <li><a href="#combos" class="nav-link" data-i18n="nav.combos">Combos</a></li>
+                <li><a href="#contacto" class="nav-link" data-i18n="nav.contact">Contacto</a></li>
             </ul>
         </nav>
 
         <!-- Header Actions -->
         <div class="header-actions">
+            <!-- Language Selector -->
+            <div class="lang-selector-wrapper" id="langSelectorWrapper">
+                <button type="button" class="lang-selector-btn" id="langSelectorBtn" aria-expanded="false" aria-haspopup="true" aria-label="Selector de idioma">
+                    <i class="fa-solid fa-globe"></i>
+                    <span class="lang-btn-label lang-label-desktop" id="currentLangLabel">Español</span>
+                    <span class="lang-btn-label lang-label-mobile" id="currentLangLabelMobile">ES</span>
+                    <i class="fa-solid fa-chevron-down lang-chevron"></i>
+                </button>
+                <div class="lang-dropdown" id="langDropdown" role="menu" aria-label="Language Selection">
+                    <!-- Populated dynamically by main.js with all 16 languages -->
+                </div>
+            </div>
+
             <!-- Search Toggle -->
             <button class="header-btn" id="headerSearchBtn" title="Buscar comida" aria-label="Buscar en el menú">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -78,7 +95,7 @@
             <!-- Cart Button -->
             <button class="cart-trigger-btn" id="headerCartBtn" aria-label="Ver carrito de la compra">
                 <i class="fa-solid fa-bag-shopping"></i>
-                <span class="cart-btn-text">Mi Pedido</span>
+                <span class="cart-btn-text" data-i18n="nav.myOrder">Mi Pedido</span>
                 <span class="cart-badge" id="cartBadgeCount">0</span>
                 <span class="cart-btn-price" id="cartBadgePrice">0,00€</span>
             </button>
@@ -96,36 +113,41 @@
     <div class="hero-container">
         <div class="hero-content">
             <div class="hero-badge">
-                <i class="fa-solid fa-star"></i> El Auténtico Kebab de Montilla
+                <i class="fa-solid fa-star"></i> <span data-i18n="hero.badge">El Auténtico Kebab de Montilla</span>
             </div>
-            <h1>Sabor Tradicional <br><span class="highlight-text">Al Karram Kebab</span></h1>
-            <p class="hero-description">
-                Disfruta de nuestros deliciosos <strong>Durum, Doner Pita, Pizzas Turcas, Hamburguesas</strong> y menús familiares preparados con carne fresca de primera calidad, pan artesano y nuestras exclusivas salsas caseras.
-            </p>
+            <h1><span data-i18n="hero.title">Sabor Tradicional</span> <br><span class="highlight-text">Al Karram Kebab</span></h1>
+            <p class="hero-description" data-i18n="hero.desc">Disfruta de nuestros deliciosos <strong>Durum, Doner Pita, Pizzas Turcas, Hamburguesas</strong> y menús familiares preparados con carne fresca de primera calidad, pan artesano y nuestras exclusivas salsas caseras.</p>
 
             <div class="hero-info-cards">
+                <div class="info-pill status-pill" id="heroStatusPill">
+                    <span class="status-dot"></span>
+                    <div>
+                        <strong id="heroStatusTitle" data-i18n="status.checking">Comprobando horario...</strong>
+                        <span id="heroStatusSub">Europe/Madrid</span>
+                    </div>
+                </div>
                 <div class="info-pill">
                     <i class="fa-solid fa-motorcycle"></i>
                     <div>
-                        <strong>Reparto a Domicilio</strong>
-                        <span>20:00 a 00:00 Noche</span>
+                        <strong data-i18n="hero.deliveryTitle">Reparto a Domicilio</strong>
+                        <span data-i18n="hero.deliveryHours">20:00 a 00:00 Noche</span>
                     </div>
                 </div>
                 <div class="info-pill">
                     <i class="fa-solid fa-clock"></i>
                     <div>
-                        <strong>Horario Restaurante</strong>
-                        <span>V: 20:00-00:00 | S-D: 19:00-02:00</span>
+                        <strong data-i18n="hero.restaurantHoursTitle">Horario Restaurante</strong>
+                        <span data-i18n="hero.restaurantHours">L-J: 20:00-00:00 | V-D: 19:00-02:00</span>
                     </div>
                 </div>
             </div>
 
             <div class="hero-cta-buttons">
                 <a href="#menu" class="btn btn-primary btn-large">
-                    <i class="fa-solid fa-utensils"></i> Pedir Ahora
+                    <i class="fa-solid fa-utensils"></i> <span data-i18n="hero.orderNow">Pedir Ahora</span>
                 </a>
                 <a href="#combos" class="btn btn-secondary btn-large">
-                    <i class="fa-solid fa-fire"></i> Ver Menús / Combos
+                    <i class="fa-solid fa-fire"></i> <span data-i18n="hero.viewCombos">Ver Menús / Combos</span>
                 </a>
             </div>
         </div>
@@ -136,15 +158,15 @@
                 <div class="hero-floating-card top-float">
                     <i class="fa-solid fa-award"></i>
                     <div>
-                        <strong>100% Calidad</strong>
-                        <span>Pollo • Ternera • Falafel</span>
+                        <strong data-i18n="hero.qualityTitle">100% Calidad</strong>
+                        <span data-i18n="hero.qualitySub">Pollo • Ternera • Falafel</span>
                     </div>
                 </div>
                 <div class="hero-floating-card bottom-float">
                     <i class="fa-solid fa-bolt"></i>
                     <div>
-                        <strong>Servicio Rápido</strong>
-                        <span>Caliente a tu puerta</span>
+                        <strong data-i18n="hero.fastTitle">Servicio Rápido</strong>
+                        <span data-i18n="hero.fastSub">Caliente a tu puerta</span>
                     </div>
                 </div>
             </div>
@@ -158,29 +180,29 @@
         <div class="feature-item">
             <div class="feature-icon"><i class="fa-solid fa-drumstick-bite"></i></div>
             <div class="feature-text">
-                <h3>Carne Seleccionada</h3>
-                <p>Pollo, ternera especiada y falafel 100% vegetal</p>
+                <h3 data-i18n="features.meatTitle">Carne Seleccionada</h3>
+                <p data-i18n="features.meatDesc">Pollo, ternera especiada y falafel 100% vegetal</p>
             </div>
         </div>
         <div class="feature-item">
             <div class="feature-icon"><i class="fa-solid fa-motorcycle"></i></div>
             <div class="feature-text">
-                <h3>Servicio a Domicilio</h3>
-                <p>Reparto en Montilla de 20:00 a 00:00 todos los días</p>
+                <h3 data-i18n="features.deliveryTitle">Servicio a Domicilio</h3>
+                <p data-i18n="features.deliveryDesc">Reparto en Montilla de 20:00 a 00:00 todos los días</p>
             </div>
         </div>
         <div class="feature-item">
             <div class="feature-icon"><i class="fa-solid fa-tags"></i></div>
             <div class="feature-text">
-                <h3>Los Mejores Precios</h3>
-                <p>Menús completos con patatas y bebida desde 4,00€</p>
+                <h3 data-i18n="features.pricesTitle">Los Mejores Precios</h3>
+                <p data-i18n="features.pricesDesc">Menús completos con patatas y bebida desde 4,00€</p>
             </div>
         </div>
         <div class="feature-item">
             <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
             <div class="feature-text">
-                <h3>Pide por Teléfono / WhatsApp</h3>
-                <p>Atención directa y personalizada al 611 168 163</p>
+                <h3 data-i18n="features.whatsappTitle">Pide por Teléfono / WhatsApp</h3>
+                <p data-i18n="features.whatsappDesc">Atención directa y personalizada al 611 168 163</p>
             </div>
         </div>
     </div>
@@ -189,16 +211,16 @@
 <!-- ================= MENU SECTION ================= -->
 <section id="menu" class="menu-section">
     <div class="section-header">
-        <div class="section-tag">NUESTRA CARTA</div>
-        <h2>Explora Nuestro Menú</h2>
-        <p>Selecciona tu plato favorito y personalízalo a tu gusto con salsas y extras</p>
+        <div class="section-tag" data-i18n="menu.tag">NUESTRA CARTA</div>
+        <h2 data-i18n="menu.title">Explora Nuestro Menú</h2>
+        <p data-i18n="menu.desc">Selecciona tu plato favorito y personalízalo a tu gusto con salsas y extras</p>
     </div>
 
     <!-- Search & Quick Filters Bar -->
     <div class="menu-controls-wrapper">
         <div class="menu-search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="menuSearchInput" placeholder="Buscar durum, pita, hamburguesa, patatas, bebida..." autocomplete="off">
+            <input type="text" id="menuSearchInput" placeholder="Buscar durum, pita, hamburguesa, patatas, bebida..." autocomplete="off" data-i18n="menu.searchPlaceholder" data-i18n-attr="placeholder">
             <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display:none;" title="Limpiar búsqueda">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -206,33 +228,15 @@
 
         <!-- Category Pills (KFC-style interactive filter navigation) -->
         <div class="categories-nav" id="categoryNav">
-            <button class="cat-pill active" data-category="all">
-                <i class="fa-solid fa-border-all"></i> Todos
-            </button>
-            <button class="cat-pill" data-category="kebab">
-                <i class="fa-solid fa-bread-slice"></i> Kebab
-            </button>
-            <button class="cat-pill" data-category="platos">
-                <i class="fa-solid fa-plate-wheat"></i> Platos
-            </button>
-            <button class="cat-pill" data-category="hamburguesas">
-                <i class="fa-solid fa-burger"></i> Hamburguesas
-            </button>
-            <button class="cat-pill" data-category="pollo">
-                <i class="fa-solid fa-drumstick-bite"></i> Pollo
-            </button>
-            <button class="cat-pill" data-category="patatas">
-                <i class="fa-solid fa-fire-flame-curved"></i> Patatas
-            </button>
-            <button class="cat-pill" data-category="combos" id="combosPill">
-                <i class="fa-solid fa-boxes-packing"></i> Menús / Combos
-            </button>
-            <button class="cat-pill" data-category="bebidas">
-                <i class="fa-solid fa-bottle-water"></i> Bebidas
-            </button>
-            <button class="cat-pill" data-category="extras">
-                <i class="fa-solid fa-plus"></i> Extras
-            </button>
+            <button class="cat-pill active" data-category="all"><i class="fa-solid fa-border-all"></i> <span data-i18n="categories.all">Todos</span></button>
+            <button class="cat-pill" data-category="kebab"><i class="fa-solid fa-bread-slice"></i> <span data-i18n="categories.kebab">Kebab</span></button>
+            <button class="cat-pill" data-category="platos"><i class="fa-solid fa-plate-wheat"></i> <span data-i18n="categories.platos">Platos</span></button>
+            <button class="cat-pill" data-category="hamburguesas"><i class="fa-solid fa-burger"></i> <span data-i18n="categories.hamburguesas">Hamburguesas</span></button>
+            <button class="cat-pill" data-category="pollo"><i class="fa-solid fa-drumstick-bite"></i> <span data-i18n="categories.pollo">Pollo</span></button>
+            <button class="cat-pill" data-category="patatas"><i class="fa-solid fa-fire-flame-curved"></i> <span data-i18n="categories.patatas">Patatas</span></button>
+            <button class="cat-pill" data-category="combos" id="combosPill"><i class="fa-solid fa-boxes-packing"></i> <span data-i18n="categories.combos">Menús / Combos</span></button>
+            <button class="cat-pill" data-category="bebidas"><i class="fa-solid fa-bottle-water"></i> <span data-i18n="categories.bebidas">Bebidas</span></button>
+            <button class="cat-pill" data-category="extras"><i class="fa-solid fa-plus"></i> <span data-i18n="categories.extras">Extras</span></button>
         </div>
     </div>
 
@@ -249,36 +253,44 @@
     <!-- Empty State -->
     <div id="noResultsState" class="no-results-box" style="display: none;">
         <div class="no-results-icon"><i class="fa-solid fa-utensils"></i></div>
-        <h3>No encontramos platos que coincidan</h3>
-        <p>Prueba con otra palabra o selecciona una categoría diferente.</p>
-        <button class="btn btn-secondary" id="resetFiltersBtn">Ver todo el menú</button>
+        <h3 data-i18n="menu.noResultsTitle">No encontramos platos que coincidan</h3>
+        <p data-i18n="menu.noResultsDesc">Prueba con otra palabra o selecciona una categoría diferente.</p>
+        <button class="btn btn-secondary" id="resetFiltersBtn" data-i18n="menu.resetBtn">Ver todo el menú</button>
     </div>
 </section>
 
 <!-- ================= SPECIAL COMBOS PROMO BANNER ================= -->
 <section id="combos" class="promo-banner">
     <div class="promo-container">
-        <div class="promo-badge">OFERTA ESPECIAL</div>
-        <h2>Menú Familiar & Menú Para 2</h2>
-        <p>Disfruta en compañía de los menús más completos de Montilla al mejor precio con patatas grandes y refrescos.</p>
+        <div class="promo-badge" data-i18n="combos.promoBadge">OFERTA ESPECIAL</div>
+        <h2 data-i18n="combos.title">Menú Familiar & Menú Para 2</h2>
+        <p data-i18n="combos.desc">Disfruta en compañía de los menús más completos de Montilla al mejor precio con patatas grandes y refrescos.</p>
         <div class="promo-cards">
             <div class="promo-card">
-                <div class="promo-card-tag">Ahorro Pareja</div>
+                <div class="promo-card-tag" data-i18n="combos.tagCouple">Ahorro Pareja</div>
                 <h3>Menú Para 2</h3>
                 <p>2 Durum o Pita + Patatas Medianas + 2 Bebidas 33cl</p>
                 <div class="promo-price">13,00€</div>
-                <button class="btn btn-primary" onclick="openProductModal('menu-para-2')">
-                    <i class="fa-solid fa-cart-plus"></i> Pedir Menú Para 2
-                </button>
+                <button class="btn btn-primary" onclick="openProductModal('menu-para-2')"><i class="fa-solid fa-cart-plus"></i> <span data-i18n="combos.orderMenu2">Pedir Menú Para 2</span></button>
             </div>
             <div class="promo-card highlight-card">
-                <div class="promo-card-tag best-seller">El Más Pedido</div>
+                <div class="promo-card-tag best-seller" data-i18n="combos.tagFamily">El Más Pedido</div>
                 <h3>Menú Familiar</h3>
                 <p>4 Durum o Pita + 2 Patatas Grandes + 2 Bebidas 2L</p>
                 <div class="promo-price">25,50€</div>
-                <button class="btn btn-primary" onclick="openProductModal('menu-familiar')">
-                    <i class="fa-solid fa-cart-plus"></i> Pedir Menú Familiar
-                </button>
+                <button class="btn btn-primary" onclick="openProductModal('menu-familiar')"><i class="fa-solid fa-cart-plus"></i> <span data-i18n="combos.orderMenuFam">Pedir Menú Familiar</span></button>
+            </div>
+        </div>
+
+        <!-- All 11 Combos Showcase Area -->
+        <div class="combos-browser-section" id="allCombosShowcase">
+            <div class="combos-browser-header">
+                <span class="combos-browser-badge"><i class="fa-solid fa-boxes-packing"></i> <span data-i18n="combos.showcaseBadge">Colección Completa</span></span>
+                <h3 data-i18n="combos.showcaseTitle">Todos Nuestros Menús & Combos (11 Opciones)</h3>
+                <p data-i18n="combos.showcaseDesc">Ahorra siempre con nuestros menús completos: plato principal + patatas fritas + bebida</p>
+            </div>
+            <div class="combos-scroll-grid" id="allCombosGrid">
+                <!-- Dynamically rendered from existing MENU_DATA combos by main.js -->
             </div>
         </div>
     </div>
@@ -287,9 +299,9 @@
 <!-- ================= RESTAURANT INFO & CONTACT ================= -->
 <section id="contacto" class="info-section">
     <div class="section-header">
-        <div class="section-tag">INFORMACIÓN Y CONTACTO</div>
-        <h2>Visítanos o Haz tu Pedido</h2>
-        <p>Estamos en el corazón de Montilla para ofrecerte la mejor comida recién preparada</p>
+        <div class="section-tag" data-i18n="contact.tag">INFORMACIÓN Y CONTACTO</div>
+        <h2 data-i18n="contact.title">Visítanos o Haz tu Pedido</h2>
+        <p data-i18n="contact.desc">Estamos en el corazón de Montilla para ofrecerte la mejor comida recién preparada</p>
     </div>
 
     <div class="info-grid">
@@ -298,15 +310,15 @@
             <div class="info-item">
                 <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
                 <div>
-                    <h4>Dirección</h4>
-                    <p>Calle Corredera 46, Local 3<br>Montilla, Córdoba</p>
+                    <h4 data-i18n="contact.addressTitle">Dirección</h4>
+                    <p data-i18n="contact.addressDesc">Calle Corredera 46, Local 3<br>Montilla, Córdoba</p>
                 </div>
             </div>
 
             <div class="info-item">
                 <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
                 <div>
-                    <h4>Teléfonos de Pedidos</h4>
+                    <h4 data-i18n="contact.phonesTitle">Teléfonos de Pedidos</h4>
                     <p>
                         <a href="tel:611168163" class="phone-link"><strong>611 168 163</strong></a><br>
                         <a href="tel:611696343" class="phone-link"><strong>611 696 343</strong></a>
@@ -317,28 +329,28 @@
             <div class="info-item">
                 <div class="info-icon"><i class="fa-solid fa-motorcycle"></i></div>
                 <div>
-                    <h4>Reparto a Domicilio</h4>
-                    <p><strong>20:00 hasta 00:00 Noche</strong><br>Servicio rápido en Montilla</p>
+                    <h4 data-i18n="contact.deliveryTitle">Reparto a Domicilio</h4>
+                    <p data-i18n="contact.deliveryDesc"><strong>20:00 hasta 00:00 Noche</strong><br>Servicio rápido en Montilla</p>
                 </div>
             </div>
 
             <div class="info-item">
                 <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
                 <div>
-                    <h4>Horario del Local</h4>
+                    <h4 data-i18n="contact.hoursTitle">Horario del Local</h4>
                     <p>
-                        <strong>Viernes:</strong> 20:00 hasta 00:00<br>
-                        <strong>Sábado y Domingo:</strong> 19:00 H A 02:00 H
+                        <strong data-i18n="contact.hoursFri">Lunes a Jueves: 20:00 hasta 00:00</strong><br>
+                        <strong data-i18n="contact.hoursWeekend">Viernes a Domingo: 19:00 H A 02:00 H</strong>
                     </p>
                 </div>
             </div>
 
             <div class="direct-contact-actions">
                 <a href="https://wa.me/34611168163?text=Hola%20Al%20Karram%20Kebab,%20deseo%20hacer%20un%20pedido." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
+                    <i class="fa-brands fa-whatsapp"></i> <span data-i18n="contact.btnWhatsApp">Pedir por WhatsApp</span>
                 </a>
                 <a href="tel:611168163" class="btn btn-call">
-                    <i class="fa-solid fa-phone"></i> Llamar al Restaurante
+                    <i class="fa-solid fa-phone"></i> <span data-i18n="contact.btnCall">Llamar al Restaurante</span>
                 </a>
             </div>
         </div>
@@ -392,10 +404,10 @@
         </div>
 
         <div class="footer-col">
-            <h3>Horarios y Reparto</h3>
-            <p><strong>Domicilio:</strong><br> 20:00 hasta 00:00 Noche</p>
-            <p><strong>Horario Viernes:</strong><br> 20:00 hasta 00:00</p>
-            <p><strong>Sábado y Domingo:</strong><br> 19:00 H A 02:00 H</p>
+            <h3 data-i18n="footer.hoursTitle">Horarios y Reparto</h3>
+            <p data-i18n="footer.deliveryText"><strong>Domicilio:</strong><br> 20:00 hasta 00:00 Noche</p>
+            <p data-i18n="footer.friText"><strong>Lunes a Jueves:</strong><br> 20:00 hasta 00:00</p>
+            <p data-i18n="footer.weekendText"><strong>Viernes a Domingo:</strong><br> 19:00 H A 02:00 H</p>
         </div>
 
         <div class="footer-col">
@@ -457,7 +469,7 @@
 
                     <!-- Extras checkboxes -->
                     <div id="modalExtrasGroup" class="option-group" style="display:none;">
-                        <label class="option-group-title">¿Deseas añadir extras?</label>
+                        <label class="option-group-title" data-i18n="modal.extrasTitle">¿Deseas añadir extras?</label>
                         <div class="extras-list" id="modalExtrasList"></div>
                     </div>
                 </div>
@@ -497,12 +509,8 @@
 
     <!-- Order Type Selector inside Cart -->
     <div class="cart-order-type">
-        <button type="button" class="order-type-btn active" id="btnTypeDelivery" onclick="setOrderType('delivery')">
-            <i class="fa-solid fa-motorcycle"></i> A Domicilio
-        </button>
-        <button type="button" class="order-type-btn" id="btnTypePickup" onclick="setOrderType('pickup')">
-            <i class="fa-solid fa-shop"></i> Para Recoger
-        </button>
+        <button type="button" class="order-type-btn active" id="btnTypeDelivery" onclick="setOrderType('delivery')"><i class="fa-solid fa-motorcycle"></i> <span data-i18n="cart.typeDelivery">A Domicilio</span></button>
+        <button type="button" class="order-type-btn" id="btnTypePickup" onclick="setOrderType('pickup')"><i class="fa-solid fa-shop"></i> <span data-i18n="cart.typePickup">Para Recoger</span></button>
     </div>
 
     <!-- Cart items list -->
@@ -514,19 +522,19 @@
     <div class="cart-footer">
         <div class="cart-summary">
             <div class="summary-row">
-                <span>Subtotal:</span>
+                <span data-i18n="cart.subtotal">Subtotal:</span>
                 <span id="cartSubtotalText">0,00€</span>
             </div>
             <div class="summary-row">
-                <span id="deliveryLabelText">Reparto a Domicilio:</span>
+                <span id="deliveryLabelText" data-i18n="cart.deliveryLabel">Reparto a Domicilio:</span>
                 <span id="cartDeliveryText">Gratis</span>
             </div>
             <div class="summary-row total-row">
-                <span>Total a Pagar:</span>
+                <span data-i18n="cart.totalToPay">Total a Pagar:</span>
                 <span id="cartTotalText">0,00€</span>
             </div>
-            <p class="delivery-note" id="cartDeliveryNote">
-                <i class="fa-solid fa-circle-info"></i> Reparto disponible de 20:00 a 00:00 en Montilla.
+            <p class="delivery-note" id="cartDeliveryNote" data-i18n="cart.deliveryNote">
+                <i class="fa-solid fa-circle-info"></i> Reparto disponible de 20:00 a 00:00 en Montilla. Revisa los detalles del pedido antes de confirmar.
             </p>
         </div>
 
@@ -536,7 +544,7 @@
 
         <div class="cart-sub-actions">
             <button type="button" class="btn-text-action" id="clearCartBtn">
-                <i class="fa-solid fa-trash-can"></i> Vaciar pedido
+                <i class="fa-solid fa-trash-can"></i> <span data-i18n="cart.clearBtn">Vaciar pedido</span>
             </button>
         </div>
     </div>
@@ -552,23 +560,23 @@
         <div class="checkout-header">
             <i class="fa-solid fa-clipboard-check"></i>
             <div>
-                <h3 id="checkoutTitle">Finalizar Pedido</h3>
-                <p>Completa tus datos para que el restaurante prepare tu comida</p>
+                <h3 id="checkoutTitle" data-i18n="checkout.title">Finalizar Pedido</h3>
+                <p data-i18n="checkout.subtitle">Completa tus datos para que el restaurante prepare tu comida</p>
             </div>
         </div>
 
         <form id="checkoutForm" novalidate>
             <!-- Order Type -->
             <div class="form-section">
-                <label class="form-section-title">1. Modalidad de entrega</label>
+                <label class="form-section-title" data-i18n="checkout.step1">1. Modalidad de entrega</label>
                 <div class="form-radio-grid">
                     <label class="radio-card">
                         <input type="radio" name="orderType" value="delivery" checked id="radioDelivery">
                         <div class="radio-content">
                             <i class="fa-solid fa-motorcycle"></i>
                             <div>
-                                <strong>Entrega a Domicilio</strong>
-                                <span>20:00 a 00:00 en Montilla</span>
+                                <strong data-i18n="checkout.deliveryTitle">Entrega a Domicilio</strong>
+                                <span data-i18n="checkout.deliverySub">20:00 a 00:00 en Montilla</span>
                             </div>
                         </div>
                     </label>
@@ -577,8 +585,8 @@
                         <div class="radio-content">
                             <i class="fa-solid fa-shop"></i>
                             <div>
-                                <strong>Recoger en el Local</strong>
-                                <span>Calle Corredera 46, Local 3</span>
+                                <strong data-i18n="checkout.pickupTitle">Recoger en el Local</strong>
+                                <span data-i18n="checkout.pickupSub">Calle Corredera 46, Local 3</span>
                             </div>
                         </div>
                     </label>
@@ -587,21 +595,21 @@
 
             <!-- Customer Details -->
             <div class="form-section">
-                <label class="form-section-title">2. Datos de contacto</label>
+                <label class="form-section-title" data-i18n="checkout.step2">2. Datos de contacto</label>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="custName">Nombre <span class="required">*</span></label>
+                        <label for="custName"><span data-i18n="checkout.nameLabel">Nombre</span> <span class="required">*</span></label>
                         <input type="text" id="custName" placeholder="Tu nombre" required>
                         <span class="error-msg" id="custNameError">Introduce tu nombre</span>
                     </div>
                     <div class="form-group">
-                        <label for="custSurname">Apellidos</label>
+                        <label for="custSurname" data-i18n="checkout.surnameLabel">Apellidos</label>
                         <input type="text" id="custSurname" placeholder="Tus apellidos">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="custPhone">Teléfono de contacto <span class="required">*</span></label>
+                    <label for="custPhone"><span data-i18n="checkout.phoneLabel">Teléfono de contacto</span> <span class="required">*</span></label>
                     <input type="tel" id="custPhone" placeholder="Ej: 611 168 163" required>
                     <span class="error-msg" id="custPhoneError">Introduce un teléfono de contacto válido</span>
                 </div>
@@ -609,20 +617,20 @@
 
             <!-- Address (Conditional for delivery) -->
             <div class="form-section" id="addressSection">
-                <label class="form-section-title">3. Dirección de entrega en Montilla</label>
+                <label class="form-section-title" data-i18n="checkout.step3">3. Dirección de entrega en Montilla</label>
                 <div class="form-group">
-                    <label for="custAddress">Calle, Número, Piso y Puerta <span class="required">*</span></label>
+                    <label for="custAddress"><span data-i18n="checkout.addressLabel">Calle, Número, Piso y Puerta</span> <span class="required">*</span></label>
                     <input type="text" id="custAddress" placeholder="Ej: Calle Corredera, 12, 2ºB">
                     <span class="error-msg" id="custAddressError">Introduce la dirección de entrega</span>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="custCity">Ciudad</label>
+                        <label for="custCity" data-i18n="checkout.cityLabel">Ciudad</label>
                         <input type="text" id="custCity" value="Montilla (Córdoba)" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="custPostal">Código Postal</label>
+                        <label for="custPostal" data-i18n="checkout.postalLabel">Código Postal</label>
                         <input type="text" id="custPostal" value="14550" readonly>
                     </div>
                 </div>
@@ -630,14 +638,14 @@
 
             <!-- Payment Method UI -->
             <div class="form-section">
-                <label class="form-section-title">4. Método de pago al recibir</label>
+                <label class="form-section-title" data-i18n="checkout.step4">4. Método de pago al recibir</label>
                 <div class="form-radio-grid">
                     <label class="radio-card">
                         <input type="radio" name="paymentMethod" value="cash" checked>
                         <div class="radio-content">
                             <i class="fa-solid fa-money-bill-wave"></i>
                             <div>
-                                <strong>Pago en Efectivo</strong>
+                                <strong data-i18n="checkout.cashTitle">Pago en Efectivo</strong>
                                 <span>Paga directamente al repartidor o en el local</span>
                             </div>
                         </div>
@@ -647,7 +655,7 @@
                         <div class="radio-content">
                             <i class="fa-solid fa-credit-card"></i>
                             <div>
-                                <strong>Pago con Tarjeta</strong>
+                                <strong data-i18n="checkout.cardTitle">Pago con Tarjeta</strong>
                                 <span>Datáfono en el reparto o en el local</span>
                             </div>
                         </div>
@@ -658,7 +666,7 @@
             <!-- Order Notes -->
             <div class="form-section">
                 <div class="form-group">
-                    <label for="custNotes">Notas o comentarios para la cocina / repartidor (Opcional)</label>
+                    <label for="custNotes" data-i18n="checkout.notesLabel">Notas o comentarios para la cocina / repartidor (Opcional)</label>
                     <textarea id="custNotes" rows="2" placeholder="Ej: Sin picante, salsa blanca aparte, llamar al timbre..."></textarea>
                 </div>
             </div>
@@ -666,22 +674,25 @@
             <!-- Order Preview Summary -->
             <div class="checkout-summary-box">
                 <div class="summary-line">
-                    <span>Resumen de artículos:</span>
+                    <span data-i18n="checkout.summaryItems">Resumen de artículos:</span>
                     <strong id="checkoutItemsCount">0 productos</strong>
                 </div>
                 <div class="summary-line highlight">
-                    <span>Total del pedido:</span>
+                    <span data-i18n="checkout.summaryTotal">Total del pedido:</span>
                     <strong id="checkoutFinalTotal">0,00€</strong>
                 </div>
+                <p class="checkout-review-note">
+                    <i class="fa-solid fa-circle-info"></i> Revisa los detalles del pedido antes de confirmar.
+                </p>
             </div>
 
             <!-- Submit buttons -->
             <div class="checkout-actions">
                 <button type="submit" class="btn btn-primary btn-submit-order" id="confirmOrderBtn">
-                    <i class="fa-solid fa-check"></i> Confirmar Pedido (<span id="submitOrderTotal">0,00€</span>)
+                    <i class="fa-solid fa-check"></i> <span data-i18n="checkout.confirmBtn">Confirmar Pedido</span> (<span id="submitOrderTotal">0,00€</span>)
                 </button>
                 <button type="button" class="btn btn-whatsapp-order" id="orderViaWhatsAppBtn">
-                    <i class="fa-brands fa-whatsapp"></i> Enviar Pedido por WhatsApp
+                    <i class="fa-brands fa-whatsapp"></i> <span data-i18n="checkout.whatsappBtn">Enviar Pedido por WhatsApp</span>
                 </button>
             </div>
         </form>
@@ -694,44 +705,42 @@
         <div class="conf-icon-wrapper">
             <i class="fa-solid fa-circle-check"></i>
         </div>
-        <h2>¡Pedido realizado correctamente!</h2>
+        <h2 data-i18n="confirmation.title">¡Pedido realizado correctamente!</h2>
         <p class="conf-sub">El equipo de <strong>Al Karram Kebab</strong> ha recibido tu pedido y se pondrá a prepararlo de inmediato.</p>
 
         <div class="order-receipt-card">
             <div class="receipt-header">
                 <div>
-                    <span class="receipt-label">Número de Pedido</span>
+                    <span class="receipt-label" data-i18n="confirmation.orderNumber">Número de Pedido</span>
                     <h3 class="order-number-text" id="confOrderNumber">#AK-00000</h3>
                 </div>
-                <div class="receipt-status-badge">
-                    <i class="fa-solid fa-fire"></i> En Preparación
-                </div>
+                <div class="receipt-status-badge"><i class="fa-solid fa-fire"></i> <span data-i18n="confirmation.statusPrep">En Preparación</span></div>
             </div>
 
             <div class="receipt-details">
                 <div class="receipt-row">
-                    <span>Cliente:</span>
+                    <span data-i18n="confirmation.customer">Cliente:</span>
                     <strong id="confCustomerName">-</strong>
                 </div>
                 <div class="receipt-row">
-                    <span>Teléfono:</span>
+                    <span data-i18n="confirmation.phone">Teléfono:</span>
                     <strong id="confCustomerPhone">-</strong>
                 </div>
                 <div class="receipt-row">
-                    <span>Tipo de Pedido:</span>
+                    <span data-i18n="confirmation.type">Tipo de Pedido:</span>
                     <strong id="confOrderType">-</strong>
                 </div>
                 <div class="receipt-row" id="confAddressRow">
-                    <span>Dirección:</span>
+                    <span data-i18n="confirmation.address">Dirección:</span>
                     <strong id="confCustomerAddress">-</strong>
                 </div>
                 <div class="receipt-row">
-                    <span>Método de Pago:</span>
+                    <span data-i18n="confirmation.payment">Método de Pago:</span>
                     <strong id="confPaymentMethod">-</strong>
                 </div>
                 <div class="receipt-row">
-                    <span>Horario de Reparto:</span>
-                    <strong>20:00 a 00:00 Noche</strong>
+                    <span data-i18n="confirmation.deliveryHours">Horario de Reparto:</span>
+                    <strong data-i18n="confirmation.deliveryHoursVal">20:00 a 00:00 Noche</strong>
                 </div>
             </div>
 
@@ -740,7 +749,7 @@
             </div>
 
             <div class="receipt-total-row">
-                <span>Total a Pagar:</span>
+                <span data-i18n="confirmation.totalToPay">Total a Pagar:</span>
                 <strong id="confOrderTotal">0,00€</strong>
             </div>
         </div>
@@ -754,12 +763,8 @@
         </div>
 
         <div class="conf-actions">
-            <button type="button" class="btn btn-whatsapp" id="confSendWhatsAppBtn">
-                <i class="fa-brands fa-whatsapp"></i> Enviar Copia por WhatsApp
-            </button>
-            <button type="button" class="btn btn-secondary" id="confCloseBtn">
-                <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
-            </button>
+            <button type="button" class="btn btn-whatsapp" id="confSendWhatsAppBtn"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="confirmation.sendWhatsAppBtn">Enviar Copia por WhatsApp</span></button>
+            <button type="button" class="btn btn-secondary" id="confCloseBtn"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="confirmation.backHomeBtn">Volver al Inicio</span></button>
         </div>
     </div>
 </div>
@@ -781,9 +786,25 @@
     <i class="fa-solid fa-arrow-up"></i>
 </button>
 
+<!-- ================= MOBILE BOTTOM CART BAR ================= -->
+<div class="mobile-bottom-cart-bar" id="mobileBottomCartBar" aria-label="Ver pedido en el carrito">
+    <div class="mobile-cart-bar-inner" id="mobileCartBarInner">
+        <div class="mobile-cart-bar-left">
+            <span class="mobile-cart-badge-icon"><i class="fa-solid fa-bag-shopping"></i></span>
+            <span class="mobile-cart-title">Ver Pedido</span>
+            <span class="mobile-cart-sep">•</span>
+            <span class="mobile-cart-qty" id="mobileCartBarQty">0 artículos</span>
+        </div>
+        <div class="mobile-cart-bar-right">
+            <span class="mobile-cart-total" id="mobileCartBarTotal">0,00€</span>
+            <i class="fa-solid fa-chevron-right"></i>
+        </div>
+    </div>
+</div>
+
 <!-- ================= MAIN JAVASCRIPT ================= -->
+<script src="translations.js"></script>
 <script src="main.js"></script>
 
 </body>
-</html>
 </html>

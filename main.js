@@ -18,6 +18,7 @@ const MENU_DATA = [
         description: "Pollo, Ternera, Mixto o Falafel. Rollo de pan fino relleno de carne selecta, ensalada y salsas.",
         price: 5.00,
         image: "assets/images/durum.png",
+        badge: "Popular",
         variantLabel: "Tipo de carne / relleno",
         variants: [
             { name: "Pollo", priceDiff: 0 },
@@ -242,6 +243,7 @@ const MENU_DATA = [
         description: "Con Carne Kebab y bañadas en abundante salsa de queso cheddar fundido.",
         price: 5.00,
         image: "assets/images/cheddar-fries.png",
+        badge: "Recomendado",
         variantLabel: "Tamaño",
         variants: [
             { name: "Pequeña", price: 5.00 },
@@ -470,6 +472,7 @@ const MENU_DATA = [
         description: "4 Durum o Pita + 2 Patatas Normal Grandes + 2 Bebidas de 2 Litros.",
         price: 25.50,
         image: "assets/images/combo.png",
+        badge: "Recomendado",
         variantLabel: "Elección de platos principales",
         variants: [
             { name: "4 Durum Kebab", priceDiff: 0 },
@@ -584,6 +587,285 @@ const MASTER_EXTRAS = [
 
 
 /* ==========================================
+            MULTILINGUAL STATE & SYSTEM
+========================================== */
+let currentLang = (typeof localStorage !== "undefined" && localStorage.getItem("alkarram_language")) || "es";
+if (typeof window !== "undefined") {
+    if (!window.LANGUAGES || !window.LANGUAGES[currentLang]) {
+        currentLang = "es";
+    }
+    window.currentLang = currentLang;
+}
+
+const LANG_SHORT_CODES = {
+    es: "ES",
+    en: "EN",
+    fr: "FR",
+    de: "DE",
+    it: "IT",
+    pt: "PT",
+    ptBR: "BR",
+    ar: "عربي",
+    tr: "TR",
+    ru: "RU",
+    zhCN: "中文",
+    ja: "JA",
+    ko: "KO",
+    hi: "HI",
+    ur: "اردو",
+    romanUrdu: "RO"
+};
+
+function updateLanguageButtonLabels(lang) {
+    const desktopLabel = document.getElementById("currentLangLabel");
+    const mobileLabel = document.getElementById("currentLangLabelMobile");
+    const langInfo = window.LANGUAGES && window.LANGUAGES[lang];
+
+    if (desktopLabel && langInfo) {
+        desktopLabel.textContent = langInfo.name;
+    }
+    if (mobileLabel) {
+        mobileLabel.textContent = LANG_SHORT_CODES[lang] || (langInfo ? langInfo.name.substring(0, 3).toUpperCase() : "ES");
+    }
+
+    const langBtn = document.getElementById("langSelectorBtn");
+    if (langBtn && langInfo) {
+        langBtn.setAttribute("aria-label", `Selector de idioma (${langInfo.name})`);
+    }
+}
+
+function initMultilingualSystem() {
+    try {
+        const saved = localStorage.getItem("alkarram_language");
+        if (saved && window.LANGUAGES && window.LANGUAGES[saved]) {
+            currentLang = saved;
+        } else {
+            currentLang = "es";
+        }
+    } catch (e) {
+        currentLang = "es";
+    }
+    window.currentLang = currentLang;
+
+    if (window.LANGUAGES && window.LANGUAGES[currentLang]) {
+        document.documentElement.lang = window.LANGUAGES[currentLang].code || currentLang;
+        document.documentElement.dir = window.LANGUAGES[currentLang].dir || "ltr";
+    }
+
+    const dropdown = document.getElementById("langDropdown");
+    const langBtn = document.getElementById("langSelectorBtn");
+
+    updateLanguageButtonLabels(currentLang);
+
+    if (dropdown && window.LANGUAGES) {
+        dropdown.innerHTML = Object.keys(window.LANGUAGES).map(code => {
+            const l = window.LANGUAGES[code];
+            const isActive = code === currentLang;
+            return `
+                <button type="button" class="lang-option-item ${isActive ? 'active' : ''}" data-lang="${code}" role="menuitem">
+                    <span class="lang-option-flag">${l.flag}</span>
+                    <span class="lang-option-name">${l.name}</span>
+                    ${isActive ? '<i class="fa-solid fa-check lang-check"></i>' : ''}
+                </button>
+            `;
+        }).join("");
+
+        dropdown.querySelectorAll(".lang-option-item").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const selected = btn.getAttribute("data-lang");
+                if (selected && selected !== currentLang) {
+                    setLanguage(selected);
+                }
+                closeLanguageDropdown();
+            });
+        });
+    }
+
+    if (langBtn) {
+        langBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleLanguageDropdown();
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+        const wrapper = document.getElementById("langSelectorWrapper");
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeLanguageDropdown();
+        }
+    });
+
+    applyTranslations();
+}
+
+function toggleLanguageDropdown() {
+    const dropdown = document.getElementById("langDropdown");
+    const btn = document.getElementById("langSelectorBtn");
+    if (!dropdown || !btn) return;
+
+    const isOpen = dropdown.classList.contains("show");
+    if (isOpen) {
+        closeLanguageDropdown();
+    } else {
+        dropdown.classList.add("show");
+        btn.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+    }
+}
+
+function closeLanguageDropdown() {
+    const dropdown = document.getElementById("langDropdown");
+    const btn = document.getElementById("langSelectorBtn");
+    if (dropdown) dropdown.classList.remove("show");
+    if (btn) {
+        btn.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+    }
+}
+
+function setLanguage(lang) {
+    if (!window.LANGUAGES || !window.LANGUAGES[lang]) return;
+
+    currentLang = lang;
+    window.currentLang = lang;
+
+    try {
+        localStorage.setItem("alkarram_language", lang);
+    } catch (e) {
+        console.warn("No se pudo guardar el idioma en localStorage", e);
+    }
+
+    const langInfo = window.LANGUAGES[lang];
+    document.documentElement.lang = langInfo.code || lang;
+    document.documentElement.dir = langInfo.dir || "ltr";
+
+    updateLanguageButtonLabels(lang);
+
+    document.querySelectorAll(".lang-option-item").forEach(item => {
+        const itemCode = item.getAttribute("data-lang");
+        if (itemCode === lang) {
+            item.classList.add("active");
+            if (!item.querySelector(".lang-check")) {
+                const check = document.createElement("i");
+                check.className = "fa-solid fa-check lang-check";
+                item.appendChild(check);
+            }
+        } else {
+            item.classList.remove("active");
+            const check = item.querySelector(".lang-check");
+            if (check) check.remove();
+        }
+    });
+
+    applyTranslations();
+}
+
+function applyTranslations() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const val = window.t ? window.t(key) : null;
+        if (val) {
+            const attr = el.getAttribute("data-i18n-attr");
+            if (attr) {
+                el.setAttribute(attr, val);
+            } else if (val.includes("<") && val.includes(">")) {
+                el.innerHTML = val;
+            } else {
+                el.textContent = val;
+            }
+        }
+    });
+
+    renderProducts();
+    renderAllCombosShowcase();
+    updateLiveRestaurantStatus();
+    updateCartUI();
+
+    if (currentProduct && document.getElementById("productModalOverlay")?.classList.contains("open")) {
+        retranslateProductModal();
+    }
+}
+
+function retranslateProductModal() {
+    if (!currentProduct) return;
+    const catTag = document.getElementById("modalCategoryTag");
+    const nameEl = document.getElementById("modalProductName");
+    const descEl = document.getElementById("modalProductDesc");
+    const variantLabel = document.getElementById("modalVariantLabel");
+    const meatLabel = document.getElementById("modalMeatLabel");
+    const drinkLabel = document.getElementById("modalDrinkLabel");
+
+    const tInfo = (window.tProduct && window.tProduct(currentProduct.id)) || { name: currentProduct.name, desc: currentProduct.description };
+    if (catTag && window.tCategory) catTag.innerText = window.tCategory(currentProduct.category);
+    if (nameEl) nameEl.innerText = tInfo.name;
+    if (descEl) descEl.innerText = tInfo.desc;
+
+    if (variantLabel && currentProduct.variantLabel && window.tOption) {
+        variantLabel.innerText = window.tOption(currentProduct.variantLabel);
+    }
+    if (meatLabel && currentProduct.meatOptionLabel && window.tOption) {
+        meatLabel.innerText = window.tOption(currentProduct.meatOptionLabel);
+    }
+    if (drinkLabel && currentProduct.drinkOptionLabel && window.tOption) {
+        drinkLabel.innerText = window.tOption(currentProduct.drinkOptionLabel);
+    }
+
+    if (currentProduct.variants && window.tOption) {
+        const variantChips = document.getElementById("modalVariantChips");
+        if (variantChips) {
+            variantChips.querySelectorAll(".chip-btn").forEach((btn, idx) => {
+                const v = currentProduct.variants[idx];
+                if (v) {
+                    const vPrice = v.price !== undefined ? formatEuro(v.price) : (v.priceDiff > 0 ? `+${formatEuro(v.priceDiff)}` : '');
+                    btn.innerText = `${window.tOption(v.name)} ${vPrice ? `(${vPrice})` : ''}`.trim();
+                }
+            });
+        }
+    }
+
+    if (currentProduct.meatOptions && window.tOption) {
+        const meatChips = document.getElementById("modalMeatChips");
+        if (meatChips) {
+            meatChips.querySelectorAll(".chip-btn").forEach((btn, idx) => {
+                const meat = currentProduct.meatOptions[idx];
+                if (meat) btn.innerText = window.tOption(meat);
+            });
+        }
+    }
+
+    if (currentProduct.drinkOptions && window.tOption) {
+        const drinkChips = document.getElementById("modalDrinkChips");
+        if (drinkChips) {
+            drinkChips.querySelectorAll(".chip-btn").forEach((btn, idx) => {
+                const drink = currentProduct.drinkOptions[idx];
+                if (drink) btn.innerText = window.tOption(drink);
+            });
+        }
+    }
+
+    if (currentProduct.supportedExtras && window.tOption) {
+        const extrasList = document.getElementById("modalExtrasList");
+        if (extrasList) {
+            extrasList.querySelectorAll(".extra-row").forEach(row => {
+                const extId = row.getAttribute("data-id");
+                const label = row.querySelector("label");
+                if (label && extId) {
+                    label.innerText = window.tOption(extId);
+                }
+            });
+        }
+    }
+
+    const addBtn = document.getElementById("modalAddToCartBtn");
+    if (addBtn && window.t) {
+        const span = addBtn.querySelector("span");
+        if (span) span.innerText = window.t("modal.addBtn", "Añadir al pedido • ");
+    }
+}
+
+
+/* ==========================================
             STATE MANAGEMENT
 ========================================== */
 let cart = [];
@@ -625,14 +907,227 @@ function saveCartToStorage() {
 
 
 /* ==========================================
+      RESTAURANT LIVE STATUS (Europe/Madrid)
+========================================== */
+function checkRestaurantOpenStatus(testDate = null) {
+    try {
+        const now = testDate ? new Date(testDate) : new Date();
+        const dtf = new Intl.DateTimeFormat("en-US", {
+            timeZone: "Europe/Madrid",
+            weekday: "short", // 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hourCycle: "h23" // Ensures clean 0-23 hour representation
+        });
+
+        const parts = dtf.formatToParts(now);
+        const getPart = type => parts.find(p => p.type === type)?.value;
+
+        const dayName = getPart("weekday") || "Fri";
+        let hour = parseInt(getPart("hour"), 10);
+        if (isNaN(hour)) hour = 0;
+        if (hour === 24) hour = 0;
+        let minute = parseInt(getPart("minute"), 10);
+        if (isNaN(minute)) minute = 0;
+        const totalMinutes = hour * 60 + minute;
+
+        // Source of truth (Original Al Karram Kebab & Pizza Poster):
+        // Monday:    20:00 - 00:00
+        // Tuesday:   20:00 - 00:00
+        // Wednesday: 20:00 - 00:00
+        // Thursday:  20:00 - 00:00
+        // Friday:    19:00 - 02:00
+        // Saturday:  19:00 - 02:00
+        // Sunday:    19:00 - 02:00
+        //
+        // Overnight schedule:
+        // Friday/Saturday/Sunday service remains OPEN from 19:00 until 02:00 the following morning.
+        // At any time inside the applicable service period: OPEN NOW.
+        // At any time outside the applicable service period: CLOSED.
+        let isOpen = false;
+
+        if (dayName === "Fri") {
+            // Friday service: 19:00 - 24:00 (remains open after midnight until Saturday 02:00)
+            isOpen = (totalMinutes >= 1140 && totalMinutes < 1440);
+        } else if (dayName === "Sat") {
+            // Saturday:
+            // - Overnight continuation of Friday night service: 00:00 - 02:00
+            // - Saturday evening service: 19:00 - 24:00 (remains open after midnight until Sunday 02:00)
+            isOpen = (totalMinutes < 120) || (totalMinutes >= 1140 && totalMinutes < 1440);
+        } else if (dayName === "Sun") {
+            // Sunday:
+            // - Overnight continuation of Saturday night service: 00:00 - 02:00
+            // - Sunday evening service: 19:00 - 24:00 (remains open after midnight until Monday 02:00)
+            isOpen = (totalMinutes < 120) || (totalMinutes >= 1140 && totalMinutes < 1440);
+        } else if (dayName === "Mon") {
+            // Monday:
+            // - Overnight continuation of Sunday night service: 00:00 - 02:00
+            // - Monday evening service: 20:00 - 24:00
+            isOpen = (totalMinutes < 120) || (totalMinutes >= 1200 && totalMinutes < 1440);
+        } else {
+            // Tuesday, Wednesday, Thursday:
+            // Evening service: 20:00 - 24:00
+            isOpen = (totalMinutes >= 1200 && totalMinutes < 1440);
+        }
+
+        const isDeliveryOpen = isOpen;
+
+        // Current restaurant-local day grouping for delivery hours display:
+        // Monday–Thursday: "Delivery: 20:00 to 00:00 Night"
+        // Friday–Sunday:   "Delivery: 19:00 to 02:00 Night"
+        const isWeekendDay = (dayName === "Fri" || dayName === "Sat" || dayName === "Sun");
+        const dayGroup = isWeekendDay ? "Fri-Sun" : "Mon-Thu";
+        const deliveryHoursEn = isWeekendDay ? "Delivery: 19:00 to 02:00 Night" : "Delivery: 20:00 to 00:00 Night";
+        const deliveryHoursEs = isWeekendDay ? "Domicilio: 19:00 a 02:00 Noche" : "Domicilio: 20:00 a 00:00 Noche";
+
+        return {
+            isOpen,
+            isDeliveryOpen,
+            hour,
+            minute,
+            totalMinutes,
+            dayName,
+            dayGroup,
+            isWeekendDay,
+            deliveryHours: deliveryHoursEn,
+            deliveryHoursEn,
+            deliveryHoursEs,
+            timeZone: "Europe/Madrid"
+        };
+    } catch (e) {
+        console.warn("Error evaluando horario de Madrid:", e);
+        return {
+            isOpen: false,
+            isDeliveryOpen: false,
+            hour: 0,
+            minute: 0,
+            totalMinutes: 0,
+            dayName: "Sun",
+            dayGroup: "Fri-Sun",
+            isWeekendDay: true,
+            deliveryHours: "Delivery: 19:00 to 02:00 Night",
+            deliveryHoursEn: "Delivery: 19:00 to 02:00 Night",
+            deliveryHoursEs: "Domicilio: 19:00 a 02:00 Noche",
+            timeZone: "Europe/Madrid"
+        };
+    }
+}
+
+function updateLiveRestaurantStatus(testDate = null) {
+    const status = checkRestaurantOpenStatus(testDate);
+    const topBadge = document.getElementById("topBarStatusBadge");
+    const heroPill = document.getElementById("heroStatusPill");
+    const heroTitle = document.getElementById("heroStatusTitle");
+    const heroSub = document.getElementById("heroStatusSub");
+    const topDelivery = document.getElementById("topBarDeliveryText");
+
+    const statusClass = status.isOpen ? "is-open" : "is-closed";
+    const statusText = status.isOpen 
+        ? (window.t ? window.t("status.open", "Abierto ahora") : "Abierto ahora") 
+        : (window.t ? window.t("status.closed", "Cerrado ahora") : "Cerrado ahora");
+    
+    let subText = "";
+    if (status.isOpen) {
+        subText = window.t ? window.t("status.openBoth", "Local y Reparto Activos") : "Local y Reparto Activos";
+    } else {
+        const nextTime = status.isWeekendDay ? "19:00" : "20:00";
+        subText = window.t ? window.t("status.closedSub", `Próxima apertura a las ${nextTime}`) : `Próxima apertura a las ${nextTime}`;
+    }
+
+    if (topBadge) {
+        topBadge.className = `live-status-badge ${statusClass}`;
+        topBadge.innerHTML = `<span class="status-dot"></span> <span class="status-text">${statusText}</span>`;
+    }
+
+    if (heroPill) {
+        heroPill.className = `info-pill status-pill ${statusClass}`;
+    }
+
+    if (heroTitle) {
+        heroTitle.innerText = statusText;
+    }
+
+    if (heroSub) {
+        heroSub.innerText = subText;
+    }
+
+    // Dynamic header delivery hours for current restaurant-local day
+    if (topDelivery) {
+        let deliveryHtml = "";
+        if (window.t) {
+            deliveryHtml = status.isWeekendDay 
+                ? window.t("topBar.deliveryWeekend")
+                : window.t("topBar.deliveryWeekday");
+        }
+        if (!deliveryHtml) {
+            const isEnglish = (window.currentLang === "en");
+            deliveryHtml = isEnglish
+                ? (status.isWeekendDay ? "Delivery: <strong>19:00 to 02:00 Night</strong>" : "Delivery: <strong>20:00 to 00:00 Night</strong>")
+                : (status.isWeekendDay ? "Domicilio: <strong>19:00 a 02:00 Noche</strong>" : "Domicilio: <strong>20:00 a 00:00 Noche</strong>");
+        }
+        topDelivery.innerHTML = deliveryHtml;
+    }
+}
+
+// Expose for external calls and testing
+window.checkRestaurantOpenStatus = checkRestaurantOpenStatus;
+window.updateLiveRestaurantStatus = updateLiveRestaurantStatus;
+
+
+/* ==========================================
             DOM INITIALIZATION
 ========================================== */
 document.addEventListener("DOMContentLoaded", () => {
+    initMultilingualSystem();
     loadCartFromStorage();
     renderProducts();
+    renderAllCombosShowcase();
+    updateLiveRestaurantStatus();
+    setInterval(updateLiveRestaurantStatus, 30000); // Live status updates without page reload
     updateCartUI();
     setupEventListeners();
 });
+
+
+/* ==========================================
+        RENDER ALL 11 COMBOS SHOWCASE
+========================================== */
+function renderAllCombosShowcase() {
+    const grid = document.getElementById("allCombosGrid");
+    if (!grid) return;
+
+    const combos = MENU_DATA.filter(p => p.category === "combos");
+    grid.innerHTML = combos.map(combo => {
+        const tInfo = (window.tProduct && window.tProduct(combo.id)) || { name: combo.name, desc: combo.description };
+        let priceStr = formatEuro(combo.price);
+        if (combo.variants && combo.variants.some(v => v.price !== undefined && v.price !== combo.price)) {
+            priceStr = `${window.t ? window.t("menu.fromPrefix", "Desde") : "Desde"} ${formatEuro(combo.price)}`;
+        }
+
+        const btnText = window.t ? window.t("combos.orderBtn", "Pedir") : "Pedir";
+
+        return `
+            <div class="combo-showcase-card" onclick="openProductModal('${combo.id}')" title="Personalizar ${tInfo.name}">
+                <div class="combo-showcase-img">
+                    <img src="${combo.image}" alt="${tInfo.name}" loading="lazy" onerror="this.src='assets/images/combo.png'">
+                </div>
+                <div class="combo-showcase-body">
+                    <h4>${tInfo.name}</h4>
+                    <p>${tInfo.desc}</p>
+                    <div class="combo-showcase-footer">
+                        <span class="combo-showcase-price">${priceStr}</span>
+                        <button type="button" class="combo-showcase-btn" onclick="event.stopPropagation(); openProductModal('${combo.id}')">
+                            <i class="fa-solid fa-cart-plus"></i> ${btnText}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
 
 
 /* ==========================================
@@ -646,17 +1141,29 @@ function renderProducts() {
 
     let filtered = MENU_DATA.filter(prod => {
         const matchesCategory = (activeCategory === "all") || (prod.category === activeCategory);
-        const term = searchKeyword.toLowerCase();
-        const matchesSearch = !term ||
+        const term = searchKeyword.toLowerCase().trim();
+        if (!term) return matchesCategory;
+
+        const tInfo = (window.tProduct && window.tProduct(prod.id)) || {};
+        const trName = (tInfo.name || "").toLowerCase();
+        const trDesc = (tInfo.desc || "").toLowerCase();
+        const trCat = (window.tCategory && window.tCategory(prod.category) || "").toLowerCase();
+
+        const matchesSearch =
             prod.name.toLowerCase().includes(term) ||
             prod.description.toLowerCase().includes(term) ||
-            prod.categoryName.toLowerCase().includes(term);
+            prod.categoryName.toLowerCase().includes(term) ||
+            trName.includes(term) ||
+            trDesc.includes(term) ||
+            trCat.includes(term);
 
         return matchesCategory && matchesSearch;
     });
 
     if (countEl) {
-        countEl.innerText = `Mostrando ${filtered.length} plato${filtered.length === 1 ? '' : 's'}`;
+        const dishWord = filtered.length === 1 ? (window.t ? window.t("menu.dishSingular", "plato") : "plato") : (window.t ? window.t("menu.dishPlural", "platos") : "platos");
+        const showingWord = window.t ? window.t("menu.showing", "Mostrando") : "Mostrando";
+        countEl.innerText = `${showingWord} ${filtered.length} ${dishWord}`;
     }
 
     if (filtered.length === 0) {
@@ -668,28 +1175,45 @@ function renderProducts() {
     if (noResults) noResults.style.display = "none";
 
     grid.innerHTML = filtered.map(prod => {
+        const tInfo = (window.tProduct && window.tProduct(prod.id)) || { name: prod.name, desc: prod.description };
+        const prodName = tInfo.name;
+        const prodDesc = tInfo.desc;
+        const catName = window.tCategory ? window.tCategory(prod.category) : prod.categoryName;
+        const badgeName = (window.tBadge && prod.badge) ? window.tBadge(prod.badge) : (prod.badge || "");
+
         // Price display: Check if variants have different prices
         let priceStr = formatEuro(prod.price);
         if (prod.variants && prod.variants.some(v => v.price !== undefined && v.price !== prod.price)) {
-            priceStr = `Desde ${formatEuro(prod.price)}`;
+            priceStr = `${window.t ? window.t("menu.fromPrefix", "Desde") : "Desde"} ${formatEuro(prod.price)}`;
         }
+
+        const fallbackImg = prod.category === 'patatas' ? 'assets/images/fries.png' :
+                            prod.category === 'pollo' ? 'assets/images/wings.png' :
+                            prod.category === 'bebidas' ? 'assets/images/drink.png' :
+                            prod.category === 'combos' ? 'assets/images/combo.png' :
+                            'assets/images/durum.png';
+
+        const badgeHtml = badgeName ? `<span class="product-badge-pill">${badgeName}</span>` : '';
+        const pricePrefix = window.t ? window.t("menu.pricePrefix", "Precio") : "Precio";
+        const orderBtnText = window.t ? window.t("menu.orderBtn", "Pedir") : "Pedir";
 
         return `
             <article class="product-card" data-id="${prod.id}" onclick="openProductModal('${prod.id}')" style="cursor: pointer;">
                 <div class="card-img-container">
-                    <img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.src='assets/images/durum.png'">
-                    <span class="card-category-badge">${prod.categoryName}</span>
+                    <img src="${prod.image}" alt="${prodName}" loading="lazy" onerror="this.src='${fallbackImg}'">
+                    <span class="card-category-badge">${catName}</span>
+                    ${badgeHtml}
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title">${prod.name}</h3>
-                    <p class="card-desc">${prod.description}</p>
+                    <h3 class="card-title">${prodName}</h3>
+                    <p class="card-desc">${prodDesc}</p>
                     <div class="card-footer">
                         <div class="card-price-box">
-                            <span class="price-prefix">Precio</span>
+                            <span class="price-prefix">${pricePrefix}</span>
                             <span class="card-price">${priceStr}</span>
                         </div>
-                        <button type="button" class="card-btn" onclick="event.stopPropagation(); openProductModal('${prod.id}')" aria-label="Pedir ${prod.name}">
-                            <i class="fa-solid fa-plus"></i> Pedir
+                        <button type="button" class="card-btn" onclick="event.stopPropagation(); openProductModal('${prod.id}')" aria-label="Pedir ${prodName}">
+                            <i class="fa-solid fa-plus"></i> ${orderBtnText}
                         </button>
                     </div>
                 </div>
@@ -741,10 +1265,12 @@ function openProductModal(productId) {
     const basePriceEl = document.getElementById("modalProductBasePrice");
     const qtyNum = document.getElementById("modalQtyNum");
 
+    const tInfo = (window.tProduct && window.tProduct(prod.id)) || { name: prod.name, desc: prod.description };
+
     if (imgEl) imgEl.src = prod.image;
-    if (catTag) catTag.innerText = prod.categoryName;
-    if (nameEl) nameEl.innerText = prod.name;
-    if (descEl) descEl.innerText = prod.description;
+    if (catTag) catTag.innerText = window.tCategory ? window.tCategory(prod.category) : prod.categoryName;
+    if (nameEl) nameEl.innerText = tInfo.name;
+    if (descEl) descEl.innerText = tInfo.desc;
     if (basePriceEl) basePriceEl.innerText = formatEuro(prod.price);
     if (qtyNum) qtyNum.innerText = "1";
 
@@ -755,12 +1281,14 @@ function openProductModal(productId) {
 
     if (prod.variants && prod.variants.length > 0) {
         variantGroup.style.display = "block";
-        variantLabel.innerText = prod.variantLabel || "Elige una opción:";
+        const vLabelText = (window.tOption && prod.variantLabel) ? window.tOption(prod.variantLabel) : (window.t ? window.t("modal.variantLabelDefault", "Elige una opción:") : "Elige una opción:");
+        variantLabel.innerText = vLabelText;
         variantChips.innerHTML = prod.variants.map((v, idx) => {
             const vPrice = v.price !== undefined ? formatEuro(v.price) : (v.priceDiff > 0 ? `+${formatEuro(v.priceDiff)}` : '');
+            const vName = window.tOption ? window.tOption(v.name) : v.name;
             return `
                 <button type="button" class="chip-btn ${idx === 0 ? 'active' : ''}" data-idx="${idx}">
-                    ${v.name} ${vPrice ? `(${vPrice})` : ''}
+                    ${vName} ${vPrice ? `(${vPrice})` : ''}
                 </button>
             `;
         }).join("");
@@ -785,12 +1313,16 @@ function openProductModal(productId) {
 
     if (prod.meatOptions && prod.meatOptions.length > 0) {
         meatGroup.style.display = "block";
-        meatLabel.innerText = prod.meatOptionLabel || "Elige la carne:";
-        meatChips.innerHTML = prod.meatOptions.map((meat, idx) => `
-            <button type="button" class="chip-btn ${idx === 0 ? 'active' : ''}" data-meat="${meat}">
-                ${meat}
-            </button>
-        `).join("");
+        const mLabelText = (window.tOption && prod.meatOptionLabel) ? window.tOption(prod.meatOptionLabel) : (window.t ? window.t("modal.meatLabelDefault", "Elige la carne:") : "Elige la carne:");
+        meatLabel.innerText = mLabelText;
+        meatChips.innerHTML = prod.meatOptions.map((meat, idx) => {
+            const mName = window.tOption ? window.tOption(meat) : meat;
+            return `
+                <button type="button" class="chip-btn ${idx === 0 ? 'active' : ''}" data-meat="${meat}">
+                    ${mName}
+                </button>
+            `;
+        }).join("");
 
         meatChips.querySelectorAll(".chip-btn").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -810,12 +1342,16 @@ function openProductModal(productId) {
 
     if (prod.drinkOptions && prod.drinkOptions.length > 0) {
         drinkGroup.style.display = "block";
-        drinkLabel.innerText = prod.drinkOptionLabel || "Elige tu bebida:";
-        drinkChips.innerHTML = prod.drinkOptions.map((drink, idx) => `
-            <button type="button" class="chip-btn ${idx === 0 ? 'active' : ''}" data-drink="${drink}">
-                ${drink}
-            </button>
-        `).join("");
+        const dLabelText = (window.tOption && prod.drinkOptionLabel) ? window.tOption(prod.drinkOptionLabel) : (window.t ? window.t("modal.drinkLabelDefault", "Elige la bebida:") : "Elige la bebida:");
+        drinkLabel.innerText = dLabelText;
+        drinkChips.innerHTML = prod.drinkOptions.map((drink, idx) => {
+            const dName = window.tOption ? window.tOption(drink) : drink;
+            return `
+                <button type="button" class="chip-btn ${idx === 0 ? 'active' : ''}" data-drink="${drink}">
+                    ${dName}
+                </button>
+            `;
+        }).join("");
 
         drinkChips.querySelectorAll(".chip-btn").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -836,15 +1372,18 @@ function openProductModal(productId) {
         extrasGroup.style.display = "block";
         const extrasAvailable = MASTER_EXTRAS.filter(e => prod.supportedExtras.includes(e.id));
 
-        extrasList.innerHTML = extrasAvailable.map(ext => `
-            <div class="extra-row" data-id="${ext.id}">
-                <div class="extra-checkbox-wrapper">
-                    <input type="checkbox" id="ext_${ext.id}" value="${ext.id}">
-                    <label for="ext_${ext.id}">${ext.name}</label>
+        extrasList.innerHTML = extrasAvailable.map(ext => {
+            const extName = (window.tOption && window.tOption(ext.id)) || ext.name;
+            return `
+                <div class="extra-row" data-id="${ext.id}">
+                    <div class="extra-checkbox-wrapper">
+                        <input type="checkbox" id="ext_${ext.id}" value="${ext.id}">
+                        <label for="ext_${ext.id}">${extName}</label>
+                    </div>
+                    <span class="extra-price">+${formatEuro(ext.price)}</span>
                 </div>
-                <span class="extra-price">+${formatEuro(ext.price)}</span>
-            </div>
-        `).join("");
+            `;
+        }).join("");
 
         extrasList.querySelectorAll(".extra-row").forEach(row => {
             const checkbox = row.querySelector('input[type="checkbox"]');
@@ -1006,43 +1545,67 @@ function updateCartUI() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
-    // Delivery is free, but note delivery hours
     const deliveryCost = 0.00;
     const finalTotal = subtotal + deliveryCost;
 
-    // Header badge
     const badgeCount = document.getElementById("cartBadgeCount");
     const badgePrice = document.getElementById("cartBadgePrice");
     if (badgeCount) badgeCount.innerText = totalItems;
     if (badgePrice) badgePrice.innerText = formatEuro(finalTotal);
 
-    // Cart drawer count
     const drawerCount = document.getElementById("cartDrawerItemCount");
     if (drawerCount) drawerCount.innerText = `(${totalItems})`;
 
-    // Drawer totals
     const subtotalEl = document.getElementById("cartSubtotalText");
     const deliveryEl = document.getElementById("cartDeliveryText");
     const totalEl = document.getElementById("cartTotalText");
     const btnTotal = document.getElementById("checkoutBtnTotal");
 
     if (subtotalEl) subtotalEl.innerText = formatEuro(subtotal);
-    if (deliveryEl) deliveryEl.innerText = currentOrderType === "delivery" ? "Gratis" : "No aplica (Local)";
+    if (deliveryEl) {
+        deliveryEl.innerText = currentOrderType === "delivery" 
+            ? (window.t ? window.t("cart.deliveryFree", "Gratis") : "Gratis") 
+            : (window.t ? window.t("cart.deliveryNotApp", "No aplica (Local)") : "No aplica (Local)");
+    }
     if (totalEl) totalEl.innerText = formatEuro(finalTotal);
     if (btnTotal) btnTotal.innerText = formatEuro(finalTotal);
 
-    // Render cart items list
+    const mobileCartBar = document.getElementById("mobileBottomCartBar");
+    const mobileQty = document.getElementById("mobileCartBarQty");
+    const mobileTotal = document.getElementById("mobileCartBarTotal");
+
+    if (mobileCartBar) {
+        if (totalItems > 0) {
+            mobileCartBar.classList.add("is-visible");
+            document.body.classList.add("has-mobile-cart-bar");
+            if (mobileQty) {
+                const itemWord = totalItems === 1 ? (window.t ? window.t("cart.itemSingular", "artículo") : "artículo") : (window.t ? window.t("cart.itemPlural", "artículos") : "artículos");
+                mobileQty.innerText = `${totalItems} ${itemWord}`;
+            }
+            if (mobileTotal) {
+                mobileTotal.innerText = formatEuro(finalTotal);
+            }
+        } else {
+            mobileCartBar.classList.remove("is-visible");
+            document.body.classList.remove("has-mobile-cart-bar");
+        }
+    }
+
     const cartList = document.getElementById("cartItemsList");
     if (!cartList) return;
 
     if (cart.length === 0) {
+        const emptyTitle = window.t ? window.t("cart.emptyTitle", "Tu pedido está vacío") : "Tu pedido está vacío";
+        const emptyDesc = window.t ? window.t("cart.emptyDesc", "Añade tus platos kebab favoritos y los prepararemos al momento.") : "Añade tus platos kebab favoritos y los prepararemos al momento.";
+        const browseBtn = window.t ? window.t("cart.browseBtn", "Explorar la Carta") : "Explorar la Carta";
+
         cartList.innerHTML = `
             <div class="empty-cart-view">
                 <i class="fa-solid fa-basket-shopping"></i>
-                <h4>Tu pedido está vacío</h4>
-                <p>Añade tus platos kebab favoritos y los prepararemos al momento.</p>
+                <h4>${emptyTitle}</h4>
+                <p>${emptyDesc}</p>
                 <a href="#menu" class="btn btn-primary" onclick="closeCartDrawer()">
-                    <i class="fa-solid fa-utensils"></i> Explorar la Carta
+                    <i class="fa-solid fa-utensils"></i> ${browseBtn}
                 </a>
             </div>
         `;
@@ -1050,13 +1613,24 @@ function updateCartUI() {
     }
 
     cartList.innerHTML = cart.map(item => {
-        // Tag chips for customizations
+        const tInfo = (window.tProduct && window.tProduct(item.productId)) || { name: item.name };
+        const itemName = tInfo.name || item.name;
+
         const tags = [];
-        if (item.variantName) tags.push(item.variantName);
-        if (item.meatName) tags.push(`Carne: ${item.meatName}`);
-        if (item.drinkName) tags.push(`Bebida: ${item.drinkName}`);
+        if (item.variantName) tags.push(window.tOption ? window.tOption(item.variantName) : item.variantName);
+        if (item.meatName) {
+            const meatPrefix = window.t ? window.t("cart.meatPrefix", "Carne:") : "Carne:";
+            tags.push(`${meatPrefix} ${window.tOption ? window.tOption(item.meatName) : item.meatName}`);
+        }
+        if (item.drinkName) {
+            const drinkPrefix = window.t ? window.t("cart.drinkPrefix", "Bebida:") : "Bebida:";
+            tags.push(`${drinkPrefix} ${window.tOption ? window.tOption(item.drinkName) : item.drinkName}`);
+        }
         if (item.extras && item.extras.length > 0) {
-            item.extras.forEach(e => tags.push(`+ ${e.name}`));
+            item.extras.forEach(e => {
+                const extName = (window.tOption && window.tOption(e.id)) || e.name;
+                tags.push(`+ ${extName}`);
+            });
         }
 
         const tagsHtml = tags.map(t => `<span class="cart-item-tag-chip">${t}</span>`).join("");
@@ -1064,9 +1638,9 @@ function updateCartUI() {
 
         return `
             <div class="cart-item" data-cart-id="${item.cartItemId}">
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='assets/images/durum.png'">
+                <img src="${item.image}" alt="${itemName}" onerror="this.src='assets/images/durum.png'">
                 <div class="cart-item-details">
-                    <h4 class="cart-item-title">${item.name}</h4>
+                    <h4 class="cart-item-title">${itemName}</h4>
                     <div class="cart-item-tags">${tagsHtml}</div>
                     <div class="cart-item-bottom">
                         <span class="cart-item-price">${formatEuro(itemLineTotal)}</span>
@@ -1150,6 +1724,22 @@ function closeCheckoutModal() {
 function handleCheckoutSubmit(e) {
     e.preventDefault();
 
+    const confirmBtn = document.getElementById("confirmOrderBtn");
+    const originalBtnHtml = confirmBtn ? confirmBtn.innerHTML : "";
+
+    // Immediate button disable and loading state to prevent double clicks
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + (window.t ? window.t("checkout.processing", "Procesando...") : "Procesando...");
+    }
+
+    const restoreBtn = () => {
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalBtnHtml;
+        }
+    };
+
     const nameInput = document.getElementById("custName");
     const phoneInput = document.getElementById("custPhone");
     const addressInput = document.getElementById("custAddress");
@@ -1186,40 +1776,45 @@ function handleCheckoutSubmit(e) {
     }
 
     if (!isValid) {
-        showToast("Por favor, completa los campos requeridos marcados en rojo.");
+        restoreBtn();
+        showToast(window.t ? window.t("toasts.fillRequired", "Por favor, completa los campos requeridos marcados en rojo.") : "Por favor, completa los campos requeridos marcados en rojo.");
         return;
     }
 
-    // Create Order Object
-    const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
-    const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    // Processing feedback delay before confirmation modal
+    setTimeout(() => {
+        // Create Order Object
+        const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
+        const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
-    const orderData = {
-        orderNumber,
-        customerName: nameInput.value.trim(),
-        customerSurname: document.getElementById("custSurname")?.value.trim() || "",
-        phone: phoneInput.value.trim(),
-        orderType: orderType === "delivery" ? "A Domicilio (Montilla)" : "Recoger en el Local (Calle Corredera 46)",
-        address: orderType === "delivery" ? addressInput.value.trim() : "Recogida en local",
-        paymentMethod: paymentRadio && paymentRadio.value === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo",
-        notes: notesInput ? notesInput.value.trim() : "",
-        items: [...cart],
-        total: subtotal,
-        date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+        const orderData = {
+            orderNumber,
+            customerName: nameInput.value.trim(),
+            customerSurname: document.getElementById("custSurname")?.value.trim() || "",
+            phone: phoneInput.value.trim(),
+            orderType: orderType === "delivery" ? "A Domicilio (Montilla)" : "Recoger en el Local (Calle Corredera 46)",
+            address: orderType === "delivery" ? addressInput.value.trim() : "Recogida en local",
+            paymentMethod: paymentRadio && paymentRadio.value === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo",
+            notes: notesInput ? notesInput.value.trim() : "",
+            items: [...cart],
+            total: subtotal,
+            date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
 
-    closeCheckoutModal();
-    showConfirmationModal(orderData);
+        restoreBtn();
+        closeCheckoutModal();
+        showConfirmationModal(orderData);
 
-    // Clear cart after order is placed
-    cart = [];
-    saveCartToStorage();
-    updateCartUI();
+        // Clear cart after order is placed
+        cart = [];
+        saveCartToStorage();
+        updateCartUI();
+    }, 500);
 }
 
 function sendOrderViaWhatsApp() {
     if (cart.length === 0) {
-        showToast("Tu pedido está vacío. Elige tus platos primero.");
+        showToast(window.t ? window.t("toasts.emptyCart", "Tu pedido está vacío. Elige tus platos primero.") : "Tu pedido está vacío. Elige tus platos primero.");
         return;
     }
 
@@ -1259,56 +1854,62 @@ function sendOrderViaWhatsApp() {
     }
 
     if (!isValid) {
-        showToast("Por favor, introduce tu nombre, teléfono y dirección antes de enviar por WhatsApp.");
+        showToast(window.t ? window.t("toasts.fillRequiredWa", "Por favor, introduce tu nombre, teléfono y dirección antes de enviar por WhatsApp.") : "Por favor, introduce tu nombre, teléfono y dirección antes de enviar por WhatsApp.");
         return;
     }
 
     const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
     const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
-    const orderTypeStr = orderType === "delivery" ? "A Domicilio (Montilla)" : "Recoger en el Local";
-    const paymentStr = paymentRadio && paymentRadio.value === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo";
     const notes = notesInput ? notesInput.value.trim() : "";
 
-    // Build message
-    let msg = `*NUEVO PEDIDO - AL KARRAM KEBAB*\n`;
+    const waTr = (window.TRANSLATIONS && window.TRANSLATIONS[currentLang] && window.TRANSLATIONS[currentLang].whatsapp) || (window.TRANSLATIONS && window.TRANSLATIONS["es"].whatsapp) || {};
+
+    const orderTypeStr = orderType === "delivery" ? (waTr.deliveryHome || "A Domicilio (Montilla)") : (waTr.deliveryPickup || "Recoger en el Local (Calle Corredera 46)");
+    const paymentStr = paymentRadio && paymentRadio.value === "card" ? (waTr.card || "Pago con Tarjeta (Datáfono)") : (waTr.cash || "Pago en Efectivo");
+
+    let msg = `${waTr.orderHeader || '*NUEVO PEDIDO - AL KARRAM KEBAB*'}\n`;
     msg += `---------------------------------\n`;
-    msg += `*Pedido:* #${orderNumber}\n`;
-    msg += `*Cliente:* ${name}\n`;
-    msg += `*Teléfono:* ${phone}\n`;
-    msg += `*Tipo de Entrega:* ${orderTypeStr}\n`;
+    msg += `${waTr.orderNum || '*Pedido:*'} #${orderNumber}\n`;
+    msg += `${waTr.customer || '*Cliente:*'} ${name}\n`;
+    msg += `${waTr.phone || '*Teléfono:*'} ${phone}\n`;
+    msg += `${waTr.deliveryType || '*Tipo de Entrega:*'} ${orderTypeStr}\n`;
     if (orderType === "delivery") {
-        msg += `*Dirección:* ${address}, Montilla (Córdoba)\n`;
+        msg += `${waTr.address || '*Dirección:*'} ${address}, Montilla (Córdoba)\n`;
     }
-    msg += `*Método de Pago:* ${paymentStr}\n`;
-    msg += `*Horario Reparto:* 20:00 - 00:00 Noche\n`;
+    msg += `${waTr.paymentMethod || '*Método de Pago:*'} ${paymentStr}\n`;
+    msg += `${waTr.deliveryHours || '*Horario Reparto:* 20:00 - 00:00 Noche'}\n`;
     msg += `---------------------------------\n`;
-    msg += `*PRODUCTOS:*\n`;
+    msg += `${waTr.productsList || '*PRODUCTOS:*'}\n`;
 
     cart.forEach(item => {
         let details = [];
-        if (item.variantName) details.push(item.variantName);
-        if (item.meatName) details.push(`Carne: ${item.meatName}`);
-        if (item.drinkName) details.push(`Bebida: ${item.drinkName}`);
+        if (item.variantName) details.push(window.tOption ? window.tOption(item.variantName) : item.variantName);
+        if (item.meatName) details.push(`${waTr.meatPrefix || 'Carne'}: ${window.tOption ? window.tOption(item.meatName) : item.meatName}`);
+        if (item.drinkName) details.push(`${waTr.drinkPrefix || 'Bebida'}: ${window.tOption ? window.tOption(item.drinkName) : item.drinkName}`);
         if (item.extras && item.extras.length > 0) {
-            item.extras.forEach(e => details.push(`+${e.name}`));
+            item.extras.forEach(e => {
+                const extName = (window.tOption && window.tOption(e.id)) || e.name;
+                details.push(`+${extName}`);
+            });
         }
         const optStr = details.length > 0 ? ` (${details.join(", ")})` : "";
-        msg += `• ${item.quantity}x ${item.name}${optStr} - ${formatEuro(item.unitPrice * item.quantity)}\n`;
+        const tInfo = (window.tProduct && window.tProduct(item.productId)) || {};
+        const prodName = tInfo.name || item.name;
+        msg += `• ${item.quantity}x ${prodName}${optStr} - ${formatEuro(item.unitPrice * item.quantity)}\n`;
     });
 
     msg += `---------------------------------\n`;
-    msg += `*TOTAL A PAGAR:* ${formatEuro(subtotal)}\n`;
+    msg += `${waTr.totalToPay || '*TOTAL A PAGAR:*'} ${formatEuro(subtotal)}\n`;
     if (notes) {
-        msg += `*Notas:* ${notes}\n`;
+        msg += `${waTr.notes || '*Notas:*'} ${notes}\n`;
     }
     msg += `---------------------------------\n`;
-    msg += `_Pedido realizado desde la web de Al Karram Kebab_`;
+    msg += `${waTr.footerMsg || '_Pedido realizado desde la web de Al Karram Kebab_'}`;
 
     const encoded = encodeURIComponent(msg);
     const waUrl = `https://wa.me/34611168163?text=${encoded}`;
     window.open(waUrl, "_blank");
 
-    // Close checkout and show receipt confirmation
     const orderData = {
         orderNumber,
         customerName: name,
@@ -1367,19 +1968,23 @@ function showConfirmationModal(order) {
     if (totalEl) totalEl.innerText = formatEuro(order.total);
 
     if (itemsListEl) {
-        itemsListEl.innerHTML = order.items.map(item => `
-            <div class="receipt-item-line">
-                <span>${item.quantity}x ${item.name}</span>
-                <strong>${formatEuro(item.unitPrice * item.quantity)}</strong>
-            </div>
-        `).join("");
+        itemsListEl.innerHTML = order.items.map(item => {
+            const tInfo = (window.tProduct && window.tProduct(item.productId)) || { name: item.name };
+            return `
+                <div class="receipt-item-line">
+                    <span>${item.quantity}x ${tInfo.name}</span>
+                    <strong>${formatEuro(item.unitPrice * item.quantity)}</strong>
+                </div>
+            `;
+        }).join("");
     }
 
     // Setup WhatsApp button in confirmation
     const waBtn = document.getElementById("confSendWhatsAppBtn");
     if (waBtn) {
         waBtn.onclick = () => {
-            let msg = `Hola Al Karram Kebab, confirmo mi pedido *#${order.orderNumber}* a nombre de ${order.customerName} por valor de ${formatEuro(order.total)}. ¡Muchas gracias!`;
+            const template = window.t ? window.t("whatsapp.confirmCopy", "Hola Al Karram Kebab, confirmo mi pedido *#{orderNumber}* a nombre de {name} por valor de {total}. ¡Muchas gracias!") : "Hola Al Karram Kebab, confirmo mi pedido *#{orderNumber}* a nombre de {name} por valor de {total}. ¡Muchas gracias!";
+            let msg = template.replace('{orderNumber}', order.orderNumber).replace('{name}', order.customerName).replace('{total}', formatEuro(order.total));
             window.open(`https://wa.me/34611168163?text=${encodeURIComponent(msg)}`, "_blank");
         };
     }
@@ -1492,10 +2097,12 @@ function setupEventListeners() {
     const cartBtn = document.getElementById("headerCartBtn");
     const cartClose = document.getElementById("cartCloseBtn");
     const cartOverlay = document.getElementById("cartOverlay");
+    const mobileCartBar = document.getElementById("mobileBottomCartBar");
 
     if (cartBtn) cartBtn.addEventListener("click", openCartDrawer);
     if (cartClose) cartClose.addEventListener("click", closeCartDrawer);
     if (cartOverlay) cartOverlay.addEventListener("click", closeCartDrawer);
+    if (mobileCartBar) mobileCartBar.addEventListener("click", openCartDrawer);
 
     // Cart list interactions (+ / - / delete)
     const cartList = document.getElementById("cartItemsList");
