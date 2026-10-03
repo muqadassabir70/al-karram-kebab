@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Al Karram Kebab | Comida Rápida y Kebab a Domicilio en Montilla</title>
+
+    <meta name="description"
+        content="Al Karram Kebab en Montilla (Córdoba). Disfruta de Durum, Doner Pita, Pizzas Turcas, Hamburguesas y Menús Combos. Reparto a domicilio de 20:00 a 00:00. Tel: 611 168 163.">
+    <meta name="keywords"
+        content="Al Karram Kebab, Kebab Montilla, Durum Kebab, Doner Pita, Comida a domicilio Montilla, Pizza Turca, Hamburguesas Montilla">
+    <meta name="author" content="Al Karram Kebab">
+
+    <!-- Google Fonts: Poppins & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= TOP ANNOUNCEMENT BAR ================= -->
+<div class="top-bar">
+    <div class="top-bar-inner">
+        <div class="top-bar-left">
+            <span><i class="fa-solid fa-location-dot"></i> Calle Corredera 46, Local 3, Montilla (Córdoba)</span>
+            <span class="dot-sep">•</span>
+            <span><i class="fa-solid fa-motorcycle"></i> Domicilio: <strong>20:00 a 00:00 Noche</strong></span>
+        </div>
+        <div class="top-bar-right">
+            <span><i class="fa-solid fa-phone"></i> Pedidos: 
+                <a href="tel:611168163">611 168 163</a> / <a href="tel:611696343">611 696 343</a>
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header id="mainHeader">
+    <div class="header-container">
+        <!-- Logo -->
+        <a href="#" class="logo" aria-label="Al Karram Kebab Inicio">
+            <div class="logo-icon">
+                <i class="fa-solid fa-fire-burner"></i>
+            </div>
+            <div class="logo-text">
+                <span class="brand-title">Al Karram</span>
+                <span class="brand-sub">KEBAB & PIZZA</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav id="navbar" aria-label="Navegación principal">
+            <ul>
+                <li><a href="#" class="nav-link active">Inicio</a></li>
+                <li><a href="#menu" class="nav-link">Menú</a></li>
+                <li><a href="#combos" class="nav-link">Combos</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Search Toggle -->
+            <button class="header-btn" id="headerSearchBtn" title="Buscar comida" aria-label="Buscar en el menú">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <!-- Cart Button -->
+            <button class="cart-trigger-btn" id="headerCartBtn" aria-label="Ver carrito de la compra">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-btn-text">Mi Pedido</span>
+                <span class="cart-badge" id="cartBadgeCount">0</span>
+                <span class="cart-btn-price" id="cartBadgePrice">0,00€</span>
+            </button>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="menu-toggle-btn" id="menuToggle" aria-label="Abrir menú de navegación">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="home">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fa-solid fa-star"></i> El Auténtico Kebab de Montilla
+            </div>
+            <h1>Sabor Tradicional <br><span class="highlight-text">Al Karram Kebab</span></h1>
+            <p class="hero-description">
+                Disfruta de nuestros deliciosos <strong>Durum, Doner Pita, Pizzas Turcas, Hamburguesas</strong> y menús familiares preparados con carne fresca de primera calidad, pan artesano y nuestras exclusivas salsas caseras.
+            </p>
+
+            <div class="hero-info-cards">
+                <div class="info-pill">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <div>
+                        <strong>Reparto a Domicilio</strong>
+                        <span>20:00 a 00:00 Noche</span>
+                    </div>
+                </div>
+                <div class="info-pill">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                        <strong>Horario Restaurante</strong>
+                        <span>V: 20:00-00:00 | S-D: 19:00-02:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-cta-buttons">
+                <a href="#menu" class="btn btn-primary btn-large">
+                    <i class="fa-solid fa-utensils"></i> Pedir Ahora
+                </a>
+                <a href="#combos" class="btn btn-secondary btn-large">
+                    <i class="fa-solid fa-fire"></i> Ver Menús / Combos
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-media">
+            <div class="hero-img-wrapper">
+                <img src="assets/images/durum.png" alt="Delicioso Durum Kebab Al Karram" class="hero-food-img" loading="eager">
+                <div class="hero-floating-card top-float">
+                    <i class="fa-solid fa-award"></i>
+                    <div>
+                        <strong>100% Calidad</strong>
+                        <span>Pollo • Ternera • Falafel</span>
+                    </div>
+                </div>
+                <div class="hero-floating-card bottom-float">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div>
+                        <strong>Servicio Rápido</strong>
+                        <span>Caliente a tu puerta</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FEATURES STRIP ================= -->
+<section class="features-strip">
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-drumstick-bite"></i></div>
+            <div class="feature-text">
+                <h3>Carne Seleccionada</h3>
+                <p>Pollo, ternera especiada y falafel 100% vegetal</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-motorcycle"></i></div>
+            <div class="feature-text">
+                <h3>Servicio a Domicilio</h3>
+                <p>Reparto en Montilla de 20:00 a 00:00 todos los días</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-tags"></i></div>
+            <div class="feature-text">
+                <h3>Los Mejores Precios</h3>
+                <p>Menús completos con patatas y bebida desde 4,00€</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div class="feature-text">
+                <h3>Pide por Teléfono / WhatsApp</h3>
+                <p>Atención directa y personalizada al 611 168 163</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= MENU SECTION ================= -->
+<section id="menu" class="menu-section">
+    <div class="section-header">
+        <div class="section-tag">NUESTRA CARTA</div>
+        <h2>Explora Nuestro Menú</h2>
+        <p>Selecciona tu plato favorito y personalízalo a tu gusto con salsas y extras</p>
+    </div>
+
+    <!-- Search & Quick Filters Bar -->
+    <div class="menu-controls-wrapper">
+        <div class="menu-search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="menuSearchInput" placeholder="Buscar durum, pita, hamburguesa, patatas, bebida..." autocomplete="off">
+            <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display:none;" title="Limpiar búsqueda">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Category Pills (KFC-style interactive filter navigation) -->
+        <div class="categories-nav" id="categoryNav">
+            <button class="cat-pill active" data-category="all">
+                <i class="fa-solid fa-border-all"></i> Todos
+            </button>
+            <button class="cat-pill" data-category="kebab">
+                <i class="fa-solid fa-bread-slice"></i> Kebab
+            </button>
+            <button class="cat-pill" data-category="platos">
+                <i class="fa-solid fa-plate-wheat"></i> Platos
+            </button>
+            <button class="cat-pill" data-category="hamburguesas">
+                <i class="fa-solid fa-burger"></i> Hamburguesas
+            </button>
+            <button class="cat-pill" data-category="pollo">
+                <i class="fa-solid fa-drumstick-bite"></i> Pollo
+            </button>
+            <button class="cat-pill" data-category="patatas">
+                <i class="fa-solid fa-fire-flame-curved"></i> Patatas
+            </button>
+            <button class="cat-pill" data-category="combos" id="combosPill">
+                <i class="fa-solid fa-boxes-packing"></i> Menús / Combos
+            </button>
+            <button class="cat-pill" data-category="bebidas">
+                <i class="fa-solid fa-bottle-water"></i> Bebidas
+            </button>
+            <button class="cat-pill" data-category="extras">
+                <i class="fa-solid fa-plus"></i> Extras
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Counter -->
+    <div class="menu-status-bar">
+        <span id="menuResultsCount">Cargando productos...</span>
+    </div>
+
+    <!-- Product Grid (Dynamic rendering) -->
+    <div class="products-grid" id="productsGrid">
+        <!-- Rendered by JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="noResultsState" class="no-results-box" style="display: none;">
+        <div class="no-results-icon"><i class="fa-solid fa-utensils"></i></div>
+        <h3>No encontramos platos que coincidan</h3>
+        <p>Prueba con otra palabra o selecciona una categoría diferente.</p>
+        <button class="btn btn-secondary" id="resetFiltersBtn">Ver todo el menú</button>
+    </div>
+</section>
+
+<!-- ================= SPECIAL COMBOS PROMO BANNER ================= -->
+<section id="combos" class="promo-banner">
+    <div class="promo-container">
+        <div class="promo-badge">OFERTA ESPECIAL</div>
+        <h2>Menú Familiar & Menú Para 2</h2>
+        <p>Disfruta en compañía de los menús más completos de Montilla al mejor precio con patatas grandes y refrescos.</p>
+        <div class="promo-cards">
+            <div class="promo-card">
+                <div class="promo-card-tag">Ahorro Pareja</div>
+                <h3>Menú Para 2</h3>
+                <p>2 Durum o Pita + Patatas Medianas + 2 Bebidas 33cl</p>
+                <div class="promo-price">13,00€</div>
+                <button class="btn btn-primary" onclick="openProductModal('menu-para-2')">
+                    <i class="fa-solid fa-cart-plus"></i> Pedir Menú Para 2
+                </button>
+            </div>
+            <div class="promo-card highlight-card">
+                <div class="promo-card-tag best-seller">El Más Pedido</div>
+                <h3>Menú Familiar</h3>
+                <p>4 Durum o Pita + 2 Patatas Grandes + 2 Bebidas 2L</p>
+                <div class="promo-price">25,50€</div>
+                <button class="btn btn-primary" onclick="openProductModal('menu-familiar')">
+                    <i class="fa-solid fa-cart-plus"></i> Pedir Menú Familiar
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= RESTAURANT INFO & CONTACT ================= -->
+<section id="contacto" class="info-section">
+    <div class="section-header">
+        <div class="section-tag">INFORMACIÓN Y CONTACTO</div>
+        <h2>Visítanos o Haz tu Pedido</h2>
+        <p>Estamos en el corazón de Montilla para ofrecerte la mejor comida recién preparada</p>
+    </div>
+
+    <div class="info-grid">
+        <!-- Contact Details -->
+        <div class="info-card">
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                    <h4>Dirección</h4>
+                    <p>Calle Corredera 46, Local 3<br>Montilla, Córdoba</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                <div>
+                    <h4>Teléfonos de Pedidos</h4>
+                    <p>
+                        <a href="tel:611168163" class="phone-link"><strong>611 168 163</strong></a><br>
+                        <a href="tel:611696343" class="phone-link"><strong>611 696 343</strong></a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-motorcycle"></i></div>
+                <div>
+                    <h4>Reparto a Domicilio</h4>
+                    <p><strong>20:00 hasta 00:00 Noche</strong><br>Servicio rápido en Montilla</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+                <div>
+                    <h4>Horario del Local</h4>
+                    <p>
+                        <strong>Viernes:</strong> 20:00 hasta 00:00<br>
+                        <strong>Sábado y Domingo:</strong> 19:00 H A 02:00 H
+                    </p>
+                </div>
+            </div>
+
+            <div class="direct-contact-actions">
+                <a href="https://wa.me/34611168163?text=Hola%20Al%20Karram%20Kebab,%20deseo%20hacer%20un%20pedido." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
+                </a>
+                <a href="tel:611168163" class="btn btn-call">
+                    <i class="fa-solid fa-phone"></i> Llamar al Restaurante
+                </a>
+            </div>
+        </div>
+
+        <!-- Google Map -->
+        <div class="map-card">
+            <iframe
+                title="Ubicación Al Karram Kebab Montilla"
+                src="https://www.google.com/maps?q=Calle+Corredera+46+Montilla+Cordoba&output=embed"
+                width="100%"
+                height="100%"
+                style="border:0; min-height: 380px; border-radius: 16px;"
+                allowfullscreen=""
+                loading="lazy">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col brand-col">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-fire-burner"></i></div>
+                <div class="logo-text">
+                    <span class="brand-title">Al Karram</span>
+                    <span class="brand-sub">KEBAB & PIZZA</span>
+                </div>
+            </div>
+            <p>
+                El mejor restaurante de kebab y comida rápida en Montilla (Córdoba). Calidad, sabor y servicio a domicilio inmejorable.
+            </p>
+            <div class="footer-phones">
+                <a href="tel:611168163"><i class="fa-solid fa-phone"></i> 611 168 163</a>
+                <a href="tel:611696343"><i class="fa-solid fa-phone"></i> 611 696 343</a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h3>Categorías</h3>
+            <ul>
+                <li><a href="#menu" onclick="filterByCategory('kebab')">Kebab & Durum</a></li>
+                <li><a href="#menu" onclick="filterByCategory('platos')">Platos Combinados</a></li>
+                <li><a href="#menu" onclick="filterByCategory('hamburguesas')">Hamburguesas</a></li>
+                <li><a href="#menu" onclick="filterByCategory('pollo')">Pollo y Alitas</a></li>
+                <li><a href="#menu" onclick="filterByCategory('patatas')">Patatas y Raciones</a></li>
+                <li><a href="#menu" onclick="filterByCategory('combos')">Menús y Combos</a></li>
+                <li><a href="#menu" onclick="filterByCategory('bebidas')">Refrescos</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>Horarios y Reparto</h3>
+            <p><strong>Domicilio:</strong><br> 20:00 hasta 00:00 Noche</p>
+            <p><strong>Horario Viernes:</strong><br> 20:00 hasta 00:00</p>
+            <p><strong>Sábado y Domingo:</strong><br> 19:00 H A 02:00 H</p>
+        </div>
+
+        <div class="footer-col">
+            <h3>Dirección</h3>
+            <p>
+                <i class="fa-solid fa-location-dot"></i> Calle Corredera 46<br>
+                Local 3<br>
+                Montilla, Córdoba (España)
+            </p>
+            <div class="footer-social">
+                <a href="https://wa.me/34611168163" target="_blank" rel="noopener noreferrer" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="tel:611168163" title="Llamar"><i class="fa-solid fa-phone"></i></a>
+                <a href="#home" title="Ir arriba"><i class="fa-solid fa-arrow-up"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 Al Karram Kebab - Todos los derechos reservados. Calle Corredera 46, Local 3, Montilla (Córdoba).</p>
+    </div>
+</footer>
+
+<!-- ================= PRODUCT CUSTOMIZATION MODAL ================= -->
+<div class="modal-overlay" id="productModalOverlay">
+    <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar ventana">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="modal-body">
+            <div class="modal-img-col">
+                <img id="modalProductImg" src="assets/images/durum.png" alt="Producto">
+                <span class="modal-category-tag" id="modalCategoryTag">Kebab</span>
+            </div>
+
+            <div class="modal-info-col">
+                <h3 id="modalProductName">Nombre del Plato</h3>
+                <p class="modal-description" id="modalProductDesc">Descripción del plato</p>
+                <div class="modal-base-price" id="modalProductBasePrice">0,00€</div>
+
+                <div class="modal-options-container" id="modalOptionsContainer">
+                    <!-- Dynamic option groups: Variant (size / meat / flavor) -->
+                    <div id="modalVariantGroup" class="option-group" style="display:none;">
+                        <label class="option-group-title" id="modalVariantLabel">Elige una opción:</label>
+                        <div class="option-chips" id="modalVariantChips"></div>
+                    </div>
+
+                    <!-- Meat choice (if applicable) -->
+                    <div id="modalMeatGroup" class="option-group" style="display:none;">
+                        <label class="option-group-title" id="modalMeatLabel">Elige la carne:</label>
+                        <div class="option-chips" id="modalMeatChips"></div>
+                    </div>
+
+                    <!-- Drink choice (for combos) -->
+                    <div id="modalDrinkGroup" class="option-group" style="display:none;">
+                        <label class="option-group-title" id="modalDrinkLabel">Elige la bebida:</label>
+                        <div class="option-chips" id="modalDrinkChips"></div>
+                    </div>
+
+                    <!-- Extras checkboxes -->
+                    <div id="modalExtrasGroup" class="option-group" style="display:none;">
+                        <label class="option-group-title">¿Deseas añadir extras?</label>
+                        <div class="extras-list" id="modalExtrasList"></div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <div class="modal-quantity-control">
+                        <button type="button" class="qty-btn" id="modalQtyDec" aria-label="Disminuir cantidad">−</button>
+                        <span class="qty-num" id="modalQtyNum">1</span>
+                        <button type="button" class="qty-btn" id="modalQtyInc" aria-label="Aumentar cantidad">+</button>
+                    </div>
+                    <button type="button" class="btn btn-primary modal-add-btn" id="modalAddToCartBtn">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span>Añadir al pedido • </span>
+                        <strong id="modalTotalPrice">0,00€</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CART DRAWER & OVERLAY ================= -->
+<div class="cart-overlay" id="cartOverlay"></div>
+
+<aside class="cart-drawer" id="cartDrawer" aria-label="Carrito de la compra">
+    <div class="cart-header">
+        <div class="cart-title">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <h3>Mi Pedido</h3>
+            <span class="cart-count-badge" id="cartDrawerItemCount">(0)</span>
+        </div>
+        <button class="cart-close-btn" id="cartCloseBtn" aria-label="Cerrar pedido">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- Order Type Selector inside Cart -->
+    <div class="cart-order-type">
+        <button type="button" class="order-type-btn active" id="btnTypeDelivery" onclick="setOrderType('delivery')">
+            <i class="fa-solid fa-motorcycle"></i> A Domicilio
+        </button>
+        <button type="button" class="order-type-btn" id="btnTypePickup" onclick="setOrderType('pickup')">
+            <i class="fa-solid fa-shop"></i> Para Recoger
+        </button>
+    </div>
+
+    <!-- Cart items list -->
+    <div class="cart-items" id="cartItemsList">
+        <!-- Rendered by JS -->
+    </div>
+
+    <!-- Cart summary & checkout action -->
+    <div class="cart-footer">
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="cartSubtotalText">0,00€</span>
+            </div>
+            <div class="summary-row">
+                <span id="deliveryLabelText">Reparto a Domicilio:</span>
+                <span id="cartDeliveryText">Gratis</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total a Pagar:</span>
+                <span id="cartTotalText">0,00€</span>
+            </div>
+            <p class="delivery-note" id="cartDeliveryNote">
+                <i class="fa-solid fa-circle-info"></i> Reparto disponible de 20:00 a 00:00 en Montilla.
+            </p>
+        </div>
+
+        <button type="button" class="btn btn-primary checkout-trigger-btn" id="openCheckoutBtn">
+            <i class="fa-solid fa-credit-card"></i> Tramitar Pedido (<span id="checkoutBtnTotal">0,00€</span>)
+        </button>
+
+        <div class="cart-sub-actions">
+            <button type="button" class="btn-text-action" id="clearCartBtn">
+                <i class="fa-solid fa-trash-can"></i> Vaciar pedido
+            </button>
+        </div>
+    </div>
+</aside>
+
+<!-- ================= CHECKOUT MODAL ================= -->
+<div class="modal-overlay" id="checkoutModalOverlay">
+    <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+        <button class="modal-close-btn" id="checkoutCloseBtn" aria-label="Cerrar tramitación">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="checkout-header">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <div>
+                <h3 id="checkoutTitle">Finalizar Pedido</h3>
+                <p>Completa tus datos para que el restaurante prepare tu comida</p>
+            </div>
+        </div>
+
+        <form id="checkoutForm" novalidate>
+            <!-- Order Type -->
+            <div class="form-section">
+                <label class="form-section-title">1. Modalidad de entrega</label>
+                <div class="form-radio-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="orderType" value="delivery" checked id="radioDelivery">
+                        <div class="radio-content">
+                            <i class="fa-solid fa-motorcycle"></i>
+                            <div>
+                                <strong>Entrega a Domicilio</strong>
+                                <span>20:00 a 00:00 en Montilla</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="orderType" value="pickup" id="radioPickup">
+                        <div class="radio-content">
+                            <i class="fa-solid fa-shop"></i>
+                            <div>
+                                <strong>Recoger en el Local</strong>
+                                <span>Calle Corredera 46, Local 3</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Customer Details -->
+            <div class="form-section">
+                <label class="form-section-title">2. Datos de contacto</label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custName">Nombre <span class="required">*</span></label>
+                        <input type="text" id="custName" placeholder="Tu nombre" required>
+                        <span class="error-msg" id="custNameError">Introduce tu nombre</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="custSurname">Apellidos</label>
+                        <input type="text" id="custSurname" placeholder="Tus apellidos">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="custPhone">Teléfono de contacto <span class="required">*</span></label>
+                    <input type="tel" id="custPhone" placeholder="Ej: 611 168 163" required>
+                    <span class="error-msg" id="custPhoneError">Introduce un teléfono de contacto válido</span>
+                </div>
+            </div>
+
+            <!-- Address (Conditional for delivery) -->
+            <div class="form-section" id="addressSection">
+                <label class="form-section-title">3. Dirección de entrega en Montilla</label>
+                <div class="form-group">
+                    <label for="custAddress">Calle, Número, Piso y Puerta <span class="required">*</span></label>
+                    <input type="text" id="custAddress" placeholder="Ej: Calle Corredera, 12, 2ºB">
+                    <span class="error-msg" id="custAddressError">Introduce la dirección de entrega</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custCity">Ciudad</label>
+                        <input type="text" id="custCity" value="Montilla (Córdoba)" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="custPostal">Código Postal</label>
+                        <input type="text" id="custPostal" value="14550" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method UI -->
+            <div class="form-section">
+                <label class="form-section-title">4. Método de pago al recibir</label>
+                <div class="form-radio-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="paymentMethod" value="cash" checked>
+                        <div class="radio-content">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <div>
+                                <strong>Pago en Efectivo</strong>
+                                <span>Paga directamente al repartidor o en el local</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="paymentMethod" value="card">
+                        <div class="radio-content">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <div>
+                                <strong>Pago con Tarjeta</strong>
+                                <span>Datáfono en el reparto o en el local</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Order Notes -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="custNotes">Notas o comentarios para la cocina / repartidor (Opcional)</label>
+                    <textarea id="custNotes" rows="2" placeholder="Ej: Sin picante, salsa blanca aparte, llamar al timbre..."></textarea>
+                </div>
+            </div>
+
+            <!-- Order Preview Summary -->
+            <div class="checkout-summary-box">
+                <div class="summary-line">
+                    <span>Resumen de artículos:</span>
+                    <strong id="checkoutItemsCount">0 productos</strong>
+                </div>
+                <div class="summary-line highlight">
+                    <span>Total del pedido:</span>
+                    <strong id="checkoutFinalTotal">0,00€</strong>
+                </div>
+            </div>
+
+            <!-- Submit buttons -->
+            <div class="checkout-actions">
+                <button type="submit" class="btn btn-primary btn-submit-order" id="confirmOrderBtn">
+                    <i class="fa-solid fa-check"></i> Confirmar Pedido (<span id="submitOrderTotal">0,00€</span>)
+                </button>
+                <button type="button" class="btn btn-whatsapp-order" id="orderViaWhatsAppBtn">
+                    <i class="fa-brands fa-whatsapp"></i> Enviar Pedido por WhatsApp
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= ORDER CONFIRMATION MODAL ================= -->
+<div class="modal-overlay" id="confirmationModalOverlay">
+    <div class="confirmation-modal" id="confirmationModal" role="dialog" aria-modal="true">
+        <div class="conf-icon-wrapper">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>¡Pedido realizado correctamente!</h2>
+        <p class="conf-sub">El equipo de <strong>Al Karram Kebab</strong> ha recibido tu pedido y se pondrá a prepararlo de inmediato.</p>
+
+        <div class="order-receipt-card">
+            <div class="receipt-header">
+                <div>
+                    <span class="receipt-label">Número de Pedido</span>
+                    <h3 class="order-number-text" id="confOrderNumber">#AK-00000</h3>
+                </div>
+                <div class="receipt-status-badge">
+                    <i class="fa-solid fa-fire"></i> En Preparación
+                </div>
+            </div>
+
+            <div class="receipt-details">
+                <div class="receipt-row">
+                    <span>Cliente:</span>
+                    <strong id="confCustomerName">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Teléfono:</span>
+                    <strong id="confCustomerPhone">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Tipo de Pedido:</span>
+                    <strong id="confOrderType">-</strong>
+                </div>
+                <div class="receipt-row" id="confAddressRow">
+                    <span>Dirección:</span>
+                    <strong id="confCustomerAddress">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Método de Pago:</span>
+                    <strong id="confPaymentMethod">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Horario de Reparto:</span>
+                    <strong>20:00 a 00:00 Noche</strong>
+                </div>
+            </div>
+
+            <div class="receipt-items-list" id="confItemsList">
+                <!-- Injected by JS -->
+            </div>
+
+            <div class="receipt-total-row">
+                <span>Total a Pagar:</span>
+                <strong id="confOrderTotal">0,00€</strong>
+            </div>
+        </div>
+
+        <div class="restaurant-reminder-box">
+            <i class="fa-solid fa-store"></i>
+            <div>
+                <strong>Al Karram Kebab</strong>
+                <p>Calle Corredera 46, Local 3, Montilla (Córdoba) • Tel: 611 168 163 / 611 696 343</p>
+            </div>
+        </div>
+
+        <div class="conf-actions">
+            <button type="button" class="btn btn-whatsapp" id="confSendWhatsAppBtn">
+                <i class="fa-brands fa-whatsapp"></i> Enviar Copia por WhatsApp
+            </button>
+            <button type="button" class="btn btn-secondary" id="confCloseBtn">
+                <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FLOATING CONTACT BUTTONS ================= -->
+<div class="floating-actions">
+    <a href="https://wa.me/34611168163?text=Hola%20Al%20Karram%20Kebab,%20quiero%20hacer%20un%20pedido." target="_blank" rel="noopener noreferrer" class="float-btn float-whatsapp" title="Contactar por WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="float-tooltip">WhatsApp</span>
+    </a>
+    <a href="tel:611168163" class="float-btn float-phone" title="Llamar al restaurante">
+        <i class="fa-solid fa-phone"></i>
+        <span class="float-tooltip">611 168 163</span>
+    </a>
+</div>
+
+<!-- Scroll to top button -->
+<button class="top-btn" id="scrollTopBtn" aria-label="Subir arriba">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<!-- ================= MAIN JAVASCRIPT ================= -->
+<script src="main.js"></script>
+
+</body>
+</html>
+</html>
