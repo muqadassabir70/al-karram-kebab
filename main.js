@@ -1541,12 +1541,16 @@ function setOrderType(type) {
     updateCartUI();
 }
 
+function getDeliveryCost(orderType = currentOrderType) {
+    return orderType === "delivery" ? 1.50 : 0.00;
+}
+
 function updateCartUI() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
-    const deliveryCost = 0.00;
-    const finalTotal = subtotal + deliveryCost;
+    const deliveryCost = getDeliveryCost();
+    const finalTotal = subtotal > 0 ? (subtotal + deliveryCost) : 0.00;
 
     const badgeCount = document.getElementById("cartBadgeCount");
     const badgePrice = document.getElementById("cartBadgePrice");
@@ -1560,15 +1564,19 @@ function updateCartUI() {
     const deliveryEl = document.getElementById("cartDeliveryText");
     const totalEl = document.getElementById("cartTotalText");
     const btnTotal = document.getElementById("checkoutBtnTotal");
+    const checkoutFinalTotalEl = document.getElementById("checkoutFinalTotal");
+    const submitBtnTotal = document.getElementById("submitOrderTotal");
 
     if (subtotalEl) subtotalEl.innerText = formatEuro(subtotal);
     if (deliveryEl) {
-        deliveryEl.innerText = currentOrderType === "delivery" 
-            ? (window.t ? window.t("cart.deliveryFree", "Gratis") : "Gratis") 
-            : (window.t ? window.t("cart.deliveryNotApp", "No aplica (Local)") : "No aplica (Local)");
+        deliveryEl.innerText = currentOrderType === "delivery"
+            ? formatEuro(1.50)
+            : (window.t ? window.t("cart.deliveryFree", "Free") : "Free");
     }
     if (totalEl) totalEl.innerText = formatEuro(finalTotal);
     if (btnTotal) btnTotal.innerText = formatEuro(finalTotal);
+    if (checkoutFinalTotalEl) checkoutFinalTotalEl.innerText = formatEuro(finalTotal);
+    if (submitBtnTotal) submitBtnTotal.innerText = formatEuro(finalTotal);
 
     const mobileCartBar = document.getElementById("mobileBottomCartBar");
     const mobileQty = document.getElementById("mobileCartBarQty");
@@ -1694,16 +1702,25 @@ function openCheckoutModal() {
     const overlay = document.getElementById("checkoutModalOverlay");
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    const deliveryCost = getDeliveryCost();
+    const finalTotal = subtotal + deliveryCost;
 
     const itemsCountEl = document.getElementById("checkoutItemsCount");
     const finalTotalEl = document.getElementById("checkoutFinalTotal");
     const submitBtnTotal = document.getElementById("submitOrderTotal");
 
     if (itemsCountEl) itemsCountEl.innerText = `${totalItems} producto${totalItems === 1 ? '' : 's'}`;
-    if (finalTotalEl) finalTotalEl.innerText = formatEuro(subtotal);
-    if (submitBtnTotal) submitBtnTotal.innerText = formatEuro(subtotal);
+    if (finalTotalEl) finalTotalEl.innerText = formatEuro(finalTotal);
+    if (submitBtnTotal) submitBtnTotal.innerText = formatEuro(finalTotal);
 
     // Sync order type
+    const radioDel = document.getElementById("radioDelivery");
+    const radioPick = document.getElementById("radioPickup");
+    if (radioDel && radioPick) {
+        radioDel.checked = (currentOrderType === "delivery");
+        radioPick.checked = (currentOrderType === "pickup");
+    }
+
     const addrSec = document.getElementById("addressSection");
     if (addrSec) {
         addrSec.style.display = (currentOrderType === "delivery") ? "block" : "none";
@@ -1786,6 +1803,8 @@ function handleCheckoutSubmit(e) {
         // Create Order Object
         const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
         const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+        const deliveryCost = getDeliveryCost(orderType);
+        const total = subtotal + deliveryCost;
 
         const orderData = {
             orderNumber,
@@ -1797,7 +1816,8 @@ function handleCheckoutSubmit(e) {
             paymentMethod: paymentRadio && paymentRadio.value === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo",
             notes: notesInput ? notesInput.value.trim() : "",
             items: [...cart],
-            total: subtotal,
+            deliveryCost: deliveryCost,
+            total: total,
             date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
@@ -1860,6 +1880,8 @@ function sendOrderViaWhatsApp() {
 
     const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
     const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    const deliveryCost = getDeliveryCost(orderType);
+    const finalTotal = subtotal + deliveryCost;
     const notes = notesInput ? notesInput.value.trim() : "";
 
     const waTr = (window.TRANSLATIONS && window.TRANSLATIONS[currentLang] && window.TRANSLATIONS[currentLang].whatsapp) || (window.TRANSLATIONS && window.TRANSLATIONS["es"].whatsapp) || {};
@@ -1899,7 +1921,10 @@ function sendOrderViaWhatsApp() {
     });
 
     msg += `---------------------------------\n`;
-    msg += `${waTr.totalToPay || '*TOTAL A PAGAR:*'} ${formatEuro(subtotal)}\n`;
+    if (orderType === "delivery") {
+        msg += `Delivery: ${formatEuro(deliveryCost)}\n`;
+    }
+    msg += `${waTr.totalToPay || '*TOTAL A PAGAR:*'} ${formatEuro(finalTotal)}\n`;
     if (notes) {
         msg += `${waTr.notes || '*Notas:*'} ${notes}\n`;
     }
@@ -1920,7 +1945,8 @@ function sendOrderViaWhatsApp() {
         paymentMethod: paymentStr,
         notes: notes,
         items: [...cart],
-        total: subtotal
+        deliveryCost: deliveryCost,
+        total: finalTotal
     };
 
     closeCheckoutModal();
@@ -1968,7 +1994,7 @@ function showConfirmationModal(order) {
     if (totalEl) totalEl.innerText = formatEuro(order.total);
 
     if (itemsListEl) {
-        itemsListEl.innerHTML = order.items.map(item => {
+        let itemsHtml = order.items.map(item => {
             const tInfo = (window.tProduct && window.tProduct(item.productId)) || { name: item.name };
             return `
                 <div class="receipt-item-line">
@@ -1977,6 +2003,17 @@ function showConfirmationModal(order) {
                 </div>
             `;
         }).join("");
+
+        if (order.deliveryCost && order.deliveryCost > 0) {
+            itemsHtml += `
+                <div class="receipt-item-line">
+                    <span>Delivery</span>
+                    <strong>${formatEuro(order.deliveryCost)}</strong>
+                </div>
+            `;
+        }
+
+        itemsListEl.innerHTML = itemsHtml;
     }
 
     // Setup WhatsApp button in confirmation
