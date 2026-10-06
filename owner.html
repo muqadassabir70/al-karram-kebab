@@ -967,8 +967,9 @@
             const btn = document.getElementById('loginBtn');
             const originalText = btn.innerHTML;
 
+            loginError.style.display = 'none';
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
 
             try {
                 const res = await fetch('/api/auth', {
@@ -976,19 +977,34 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
-                const data = await res.json();
-                if (data.success && data.token) {
+
+                let data = null;
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    data = null;
+                }
+
+                if (res.ok && data && data.success && data.token) {
                     authToken = data.token;
                     localStorage.setItem('alkarram_owner_token', authToken);
                     loginError.style.display = 'none';
                     startDashboard();
                 } else {
                     loginError.style.display = 'block';
-                    loginError.innerText = (window.t ? window.t('owner.loginError') : null) || data.message || 'Credenciales incorrectas';
+                    if (data && data.message) {
+                        if (data.message === 'Invalid credentials') {
+                            loginError.innerText = (window.t ? window.t('owner.loginError') : null) || 'Credenciales incorrectas. Inténtalo de nuevo.';
+                        } else {
+                            loginError.innerText = data.message;
+                        }
+                    } else {
+                        loginError.innerText = (window.t ? window.t('owner.loginError') : null) || 'Credenciales incorrectas. Inténtalo de nuevo.';
+                    }
                 }
             } catch (err) {
                 loginError.style.display = 'block';
-                loginError.innerText = (window.t ? window.t('owner.connectingError') : null) || 'Error conectando con el servidor';
+                loginError.innerText = (window.t ? window.t('owner.connectingError') : null) || 'Error conectando con el servidor. Revisa tu conexión.';
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -1001,7 +1017,7 @@
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
                 const data = await res.json();
-                if (data.success && data.authenticated) {
+                if (res.ok && data.success && data.authenticated) {
                     startDashboard();
                 } else {
                     localStorage.removeItem('alkarram_owner_token');
@@ -1021,8 +1037,12 @@
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'block';
             applyOwnerTranslations();
-            fetchOrders();
-            initPushNotifications();
+            fetchOrders().catch(err => console.warn('Error fetching orders on start:', err));
+            try {
+                initPushNotifications();
+            } catch (err) {
+                console.warn('Error initializing push on start:', err);
+            }
             if (pollInterval) clearInterval(pollInterval);
             pollInterval = setInterval(fetchOrders, 4000); // 4 second live polling
         }
@@ -1069,7 +1089,13 @@
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
                 if (res.status === 401) {
-                    logoutBtn.click();
+                    localStorage.removeItem('alkarram_owner_token');
+                    authToken = '';
+                    if (pollInterval) clearInterval(pollInterval);
+                    dashboardScreen.style.display = 'none';
+                    loginScreen.style.display = 'flex';
+                    loginError.style.display = 'block';
+                    loginError.innerText = (window.t ? window.t('owner.loginError') : null) || 'Sesión expirada. Por favor vuelve a iniciar sesión.';
                     return;
                 }
                 const data = await res.json();
@@ -1361,25 +1387,6 @@
                 alert(window.t ? window.t('owner.connectingError', 'Error de conexión al actualizar pedido') : 'Error de conexión al actualizar pedido');
             }
         }
-
-        // ==========================================
-        // WEB PUSH NOTIFICATIONS FOR OWNER
-        // ==========================================
-        let swReg = null;
-
-        function urlB64ToUint8Array(base64String) {
-            const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-            const base64 = (base64String + padding)
-                .replace(/-/g, '+')
-                .replace(/_/g, '/');
-            const rawData = window.atob(base64);
-            const outputArray = new Uint8Array(rawData.length);
-            for (let i = 0; i < rawData.length; ++i) {
-                outputArray[i] = rawData.charCodeAt(i);
-            }
-            return outputArray;
-        }
-
         // ==========================================
         // WEB PUSH NOTIFICATIONS (ANDROID + iOS)
         // ==========================================
