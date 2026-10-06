@@ -1089,6 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(updateLiveRestaurantStatus, 30000); // Live status updates without page reload
     updateCartUI();
     setupEventListeners();
+    restoreActiveOrderTracking();
 });
 
 
@@ -1538,6 +1539,12 @@ function setOrderType(type) {
         addrSec.style.display = (type === "delivery") ? "block" : "none";
     }
 
+    if (type === "delivery") {
+        setTimeout(() => {
+            if (deliveryMap) deliveryMap.invalidateSize();
+        }, 200);
+    }
+
     updateCartUI();
 }
 
@@ -1729,6 +1736,11 @@ function openCheckoutModal() {
     if (overlay) {
         overlay.classList.add("open");
         document.body.style.overflow = "hidden";
+        if (currentOrderType === "delivery") {
+            setTimeout(() => {
+                if (deliveryMap) deliveryMap.invalidateSize();
+            }, 250);
+        }
     }
 }
 
@@ -1738,7 +1750,375 @@ function closeCheckoutModal() {
     document.body.style.overflow = "";
 }
 
-function handleCheckoutSubmit(e) {
+/* ==========================================
+      DELIVERY LOCATION & LEAFLET MAP
+========================================== */
+let deliveryMap = null;
+let deliveryMarker = null;
+let selectedCoords = null; // { lat, lng }
+let isLocationConfirmed = false;
+const MONTILLA_CENTER = { lat: 37.5872, lng: -4.6391 };
+
+function initDeliveryMap(lat = MONTILLA_CENTER.lat, lng = MONTILLA_CENTER.lng) {
+    const mapEl = document.getElementById("deliveryMap");
+    const container = document.getElementById("deliveryMapContainer");
+    const helpEl = document.getElementById("locMapHelp");
+    if (!mapEl || typeof L === "undefined") return;
+
+    if (container) container.style.display = "block";
+    if (helpEl) helpEl.style.display = "block";
+
+    if (!deliveryMap) {
+        deliveryMap = L.map('deliveryMap').setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(deliveryMap);
+
+        const markerIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        deliveryMarker = L.marker([lat, lng], { draggable: true, icon: markerIcon }).addTo(deliveryMap);
+
+        deliveryMarker.on('dragend', function (e) {
+            const pos = e.target.getLatLng();
+            selectedCoords = { lat: pos.lat, lng: pos.lng };
+            isLocationConfirmed = false;
+            reverseGeocodeCoords(pos.lat, pos.lng);
+        });
+
+        deliveryMap.on('click', function (e) {
+            if (deliveryMarker) {
+                deliveryMarker.setLatLng(e.latlng);
+            }
+            selectedCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+            isLocationConfirmed = false;
+            reverseGeocodeCoords(e.latlng.lat, e.latlng.lng);
+        });
+    } else {
+        deliveryMap.setView([lat, lng], 16);
+        if (deliveryMarker) {
+            deliveryMarker.setLatLng([lat, lng]);
+        }
+    }
+
+    setTimeout(() => {
+        if (deliveryMap) deliveryMap.invalidateSize();
+    }, 250);
+}
+
+function detectCurrentLocation() {
+    const btn = document.getElementById("btnDetectLocation");
+    const statusBox = document.getElementById("locationStatusBox");
+    const originalText = btn ? btn.innerHTML : "";
+
+    if (!navigator.geolocation) {
+        showToast("Tu navegador no soporta geolocalización. Introduce tu dirección manualmente.");
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación GPS...';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            selectedCoords = { lat, lng };
+
+            if (statusBox) {
+                statusBox.style.display = "block";
+                const badge = document.getElementById("locBadgeStatus");
+                if (badge) badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación detectada por GPS';
+            }
+
+            initDeliveryMap(lat, lng);
+            reverseGeocodeCoords(lat, lng);
+            showLocationConfirmBanner();
+            showToast("📍 Ubicación detectada con éxito");
+        },
+        (err) => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+            if (statusBox) {
+                statusBox.style.display = "block";
+                const badge = document.getElementById("locBadgeStatus");
+                if (badge) badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;"></i> Ubicación no detectada';
+                const addrSpan = document.getElementById("detectedAddressSpan");
+                if (addrSpan) addrSpan.innerText = "No se pudo detectar tu ubicación automáticamente. Por favor, introduce la dirección manualmente.";
+            }
+            const changePanel = document.getElementById("changeLocPanel");
+            if (changePanel) changePanel.style.display = "block";
+            const addrInput = document.getElementById("custAddress");
+            if (addrInput) addrInput.focus();
+            showToast("No se pudo detectar la ubicación. Introduce tu dirección manualmente.");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+}
+
+async function reverseGeocodeCoords(lat, lng) {
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+            headers: { 'Accept-Language': 'es' }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            const road = (data.address && data.address.road) || "";
+            const house = (data.address && data.address.house_number) || "";
+            const city = (data.address && (data.address.town || data.address.city || data.address.village)) || "Montilla";
+            const formatted = road ? `${road}${house ? ' ' + house : ''}, ${city}` : (data.display_name || "");
+
+            if (formatted) {
+                const addrInput = document.getElementById("custAddress");
+                if (addrInput && !addrInput.value.trim()) {
+                    addrInput.value = road ? `${road}${house ? ' ' + house : ''}` : formatted;
+                }
+                const addrSpan = document.getElementById("detectedAddressSpan");
+                if (addrSpan) addrSpan.innerText = formatted;
+                const confirmSpan = document.getElementById("confirmedAddressText");
+                if (confirmSpan) confirmSpan.innerText = formatted;
+            }
+            showLocationConfirmBanner();
+        }
+    } catch (e) {
+        console.warn("Error en geocodificación inversa Nominatim:", e);
+    }
+}
+
+async function searchAddressMontilla() {
+    const input = document.getElementById("manualLocationInput");
+    if (!input || !input.value.trim()) return;
+
+    const query = input.value.trim();
+    const btn = document.getElementById("btnSearchAddress");
+    const originalText = btn ? btn.innerHTML : "";
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    }
+
+    try {
+        const fullQuery = `${query}, Montilla, Córdoba, España`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullQuery)}&limit=1`, {
+            headers: { 'Accept-Language': 'es' }
+        });
+        const results = await res.json();
+
+        if (results && results.length > 0) {
+            const lat = parseFloat(results[0].lat);
+            const lng = parseFloat(results[0].lon);
+            selectedCoords = { lat, lng };
+            isLocationConfirmed = false;
+
+            const addrInput = document.getElementById("custAddress");
+            if (addrInput) addrInput.value = query;
+
+            const addrSpan = document.getElementById("detectedAddressSpan");
+            if (addrSpan) addrSpan.innerText = results[0].display_name;
+
+            const statusBox = document.getElementById("locationStatusBox");
+            if (statusBox) statusBox.style.display = "block";
+
+            initDeliveryMap(lat, lng);
+            showLocationConfirmBanner();
+            showToast("Ubicación encontrada en el mapa");
+        } else {
+            showToast("No se encontró esa dirección en Montilla. Prueba con otra calle.");
+        }
+    } catch (e) {
+        showToast("Error al buscar dirección. Introduce los datos manualmente.");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+}
+
+function showLocationConfirmBanner() {
+    const banner = document.getElementById("locConfirmBanner");
+    if (banner) {
+        banner.style.display = "flex";
+        const btn = document.getElementById("btnConfirmLocation");
+        if (btn && isLocationConfirmed) {
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación Confirmada';
+            btn.style.background = "#059669";
+        } else if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar ubicación';
+            btn.style.background = "";
+        }
+    }
+}
+
+function confirmDeliveryLocation() {
+    if (!selectedCoords) {
+        showToast("Selecciona primero una ubicación en el mapa.");
+        return;
+    }
+    isLocationConfirmed = true;
+    const btn = document.getElementById("btnConfirmLocation");
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación Confirmada';
+        btn.style.background = "#059669";
+    }
+    showToast("✅ Ubicación confirmada para la entrega");
+}
+
+/* ==========================================
+      REAL-TIME ORDER TRACKING SYSTEM
+========================================== */
+let orderTrackingInterval = null;
+let activeTrackingOrderId = null;
+
+function startOrderTracking(orderId) {
+    if (!orderId) return;
+    activeTrackingOrderId = orderId;
+    if (orderTrackingInterval) clearInterval(orderTrackingInterval);
+
+    // Initial check
+    checkOrderStatus(orderId);
+
+    // Poll every 5 seconds
+    orderTrackingInterval = setInterval(() => {
+        checkOrderStatus(orderId);
+    }, 5000);
+}
+
+async function checkOrderStatus(orderId) {
+    try {
+        const res = await fetch(`/api/orders?id=${orderId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.order) {
+            updateTrackingStepper(data.order.status, data.order.orderType);
+            if (data.order.status === "completed" || data.order.status === "rejected") {
+                if (orderTrackingInterval) clearInterval(orderTrackingInterval);
+            }
+        }
+    } catch (e) {
+        // Quiet fail on network hiccup
+    }
+}
+
+function updateTrackingStepper(status, orderType = "") {
+    const isPickup = (orderType && orderType.toLowerCase().includes("recoger")) || (orderType === "pickup");
+
+    const transitLabel = document.getElementById("transitStepLabel");
+    const transitIcon = document.getElementById("transitStepIcon");
+    if (transitLabel && transitIcon) {
+        if (isPickup) {
+            transitLabel.innerText = "Listo para recoger";
+            transitIcon.className = "fa-solid fa-store";
+        } else {
+            transitLabel.innerText = "En Reparto";
+            transitIcon.className = "fa-solid fa-motorcycle";
+        }
+    }
+
+    const steps = {
+        submitted: document.getElementById("step-submitted"),
+        accepted: document.getElementById("step-accepted"),
+        preparing: document.getElementById("step-preparing"),
+        transit: document.getElementById("step-transit"),
+        completed: document.getElementById("step-completed")
+    };
+
+    // Reset classes
+    Object.values(steps).forEach(el => {
+        if (el) el.classList.remove("active", "completed");
+    });
+
+    const hint = document.getElementById("trackingRefreshHint");
+
+    switch (status) {
+        case "submitted":
+            if (steps.submitted) steps.submitted.classList.add("active");
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-clock"></i> Pedido enviado. Esperando confirmación del restaurante...';
+            break;
+        case "accepted":
+            if (steps.submitted) steps.submitted.classList.add("completed");
+            if (steps.accepted) steps.accepted.classList.add("active");
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ¡Pedido aceptado! El restaurante ya lo ha confirmado.';
+            break;
+        case "preparing":
+            if (steps.submitted) steps.submitted.classList.add("completed");
+            if (steps.accepted) steps.accepted.classList.add("completed");
+            if (steps.preparing) steps.preparing.classList.add("active");
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-fire" style="color:#D62828;"></i> ¡En la cocina! Preparando tu comida fresca y crujiente.';
+            break;
+        case "out_for_delivery":
+        case "ready_for_pickup":
+        case "ready":
+            if (steps.submitted) steps.submitted.classList.add("completed");
+            if (steps.accepted) steps.accepted.classList.add("completed");
+            if (steps.preparing) steps.preparing.classList.add("completed");
+            if (steps.transit) steps.transit.classList.add("active");
+            if (hint) {
+                hint.innerHTML = isPickup
+                    ? '<i class="fa-solid fa-store" style="color:#2563EB;"></i> ¡Tu pedido está listo! Puedes pasar a recogerlo por Calle Corredera 46.'
+                    : '<i class="fa-solid fa-motorcycle" style="color:#D97706;"></i> ¡El repartidor va de camino con tu pedido!';
+            }
+            break;
+        case "completed":
+            Object.values(steps).forEach(el => { if (el) el.classList.add("completed"); });
+            if (steps.completed) steps.completed.classList.add("active");
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ¡Pedido entregado! ¡Buen provecho y gracias por elegir Al Karram Kebab!';
+            break;
+        case "rejected":
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#DC2626;"></i> El restaurante no ha podido aceptar el pedido en este momento.';
+            break;
+        default:
+            if (steps.submitted) steps.submitted.classList.add("active");
+            break;
+    }
+}
+
+function restoreActiveOrderTracking() {
+    const savedId = localStorage.getItem("alkarram_active_order_id");
+    const savedNum = localStorage.getItem("alkarram_active_order_number");
+    const pill = document.getElementById("headerActiveOrderPill");
+    const textEl = document.getElementById("headerActiveOrderText");
+
+    if (savedId && pill) {
+        pill.style.display = "inline-flex";
+        if (textEl && savedNum) textEl.innerText = `Pedido #${savedNum}`;
+        pill.onclick = async () => {
+            try {
+                const res = await fetch(`/api/orders?id=${savedId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.order) {
+                        showConfirmationModal(data.order);
+                        startOrderTracking(savedId);
+                    }
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+        };
+        startOrderTracking(savedId);
+    }
+}
+
+/* ==========================================
+            CHECKOUT SUBMIT HANDLER
+========================================== */
+async function handleCheckoutSubmit(e) {
     e.preventDefault();
 
     const confirmBtn = document.getElementById("confirmOrderBtn");
@@ -1747,7 +2127,7 @@ function handleCheckoutSubmit(e) {
     // Immediate button disable and loading state to prevent double clicks
     if (confirmBtn) {
         confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + (window.t ? window.t("checkout.processing", "Procesando...") : "Procesando...");
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + (window.t ? window.t("checkout.processing", "Procesando pedido...") : "Procesando pedido...");
     }
 
     const restoreBtn = () => {
@@ -1798,38 +2178,100 @@ function handleCheckoutSubmit(e) {
         return;
     }
 
-    // Processing feedback delay before confirmation modal
-    setTimeout(() => {
-        // Create Order Object
-        const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
-        const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
-        const deliveryCost = getDeliveryCost(orderType);
-        const total = subtotal + deliveryCost;
+    const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    const deliveryCost = getDeliveryCost(orderType);
+    const total = subtotal + deliveryCost;
 
-        const orderData = {
+    const orderPayload = {
+        customerName: nameInput.value.trim(),
+        customerSurname: document.getElementById("custSurname")?.value.trim() || "",
+        phone: phoneInput.value.trim(),
+        orderType: orderType,
+        address: orderType === "delivery" ? addressInput.value.trim() : "Recogida en local",
+        location: selectedCoords ? {
+            lat: selectedCoords.lat,
+            lng: selectedCoords.lng,
+            mapsUrl: `https://maps.google.com/?q=${selectedCoords.lat},${selectedCoords.lng}`
+        } : null,
+        paymentMethod: paymentRadio && paymentRadio.value === "card" ? "card" : "cash",
+        notes: notesInput ? notesInput.value.trim() : "",
+        items: cart.map(item => ({
+            id: item.id || item.productId,
+            name: item.name,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            variantName: item.variantName || null,
+            meatName: item.meatName || null,
+            drinkName: item.drinkName || null,
+            extras: item.extras || []
+        }))
+    };
+
+    let confirmedOrder = null;
+
+    try {
+        const response = await fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderPayload)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.order) {
+                confirmedOrder = data.order;
+            }
+        }
+    } catch (err) {
+        console.warn("Backend API unavailable, using client fallback:", err);
+    }
+
+    // Client fallback if API is unreachable
+    if (!confirmedOrder) {
+        const orderNumber = "AK-" + Math.floor(10000 + Math.random() * 90000);
+        confirmedOrder = {
+            id: "ord_" + Date.now(),
             orderNumber,
-            customerName: nameInput.value.trim(),
-            customerSurname: document.getElementById("custSurname")?.value.trim() || "",
-            phone: phoneInput.value.trim(),
+            customerName: orderPayload.customerName,
+            customerSurname: orderPayload.customerSurname,
+            phone: orderPayload.phone,
             orderType: orderType === "delivery" ? "A Domicilio (Montilla)" : "Recoger en el Local (Calle Corredera 46)",
-            address: orderType === "delivery" ? addressInput.value.trim() : "Recogida en local",
-            paymentMethod: paymentRadio && paymentRadio.value === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo",
-            notes: notesInput ? notesInput.value.trim() : "",
+            address: orderPayload.address,
+            location: orderPayload.location,
+            paymentMethod: orderPayload.paymentMethod === "card" ? "Pago con Tarjeta (Datáfono)" : "Pago en Efectivo",
+            notes: orderPayload.notes,
             items: [...cart],
             deliveryCost: deliveryCost,
+            subtotal: subtotal,
             total: total,
-            date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            status: "submitted",
+            createdAt: new Date().toISOString()
         };
+    }
 
-        restoreBtn();
-        closeCheckoutModal();
-        showConfirmationModal(orderData);
+    // Save active order to localStorage
+    if (confirmedOrder.id) {
+        localStorage.setItem("alkarram_active_order_id", confirmedOrder.id);
+        localStorage.setItem("alkarram_active_order_number", confirmedOrder.orderNumber);
+        const pill = document.getElementById("headerActiveOrderPill");
+        const textEl = document.getElementById("headerActiveOrderText");
+        if (pill) {
+            pill.style.display = "inline-flex";
+            if (textEl) textEl.innerText = `Pedido #${confirmedOrder.orderNumber}`;
+        }
+    }
 
-        // Clear cart after order is placed
-        cart = [];
-        saveCartToStorage();
-        updateCartUI();
-    }, 500);
+    restoreBtn();
+    closeCheckoutModal();
+    showConfirmationModal(confirmedOrder);
+    if (confirmedOrder.id) {
+        startOrderTracking(confirmedOrder.id);
+    }
+
+    // Clear cart after order is placed
+    cart = [];
+    saveCartToStorage();
+    updateCartUI();
 }
 
 function sendOrderViaWhatsApp() {
@@ -1897,6 +2339,9 @@ function sendOrderViaWhatsApp() {
     msg += `${waTr.deliveryType || '*Tipo de Entrega:*'} ${orderTypeStr}\n`;
     if (orderType === "delivery") {
         msg += `${waTr.address || '*Dirección:*'} ${address}, Montilla (Córdoba)\n`;
+        if (selectedCoords) {
+            msg += `*Ubicación GPS:* https://maps.google.com/?q=${selectedCoords.lat},${selectedCoords.lng}\n`;
+        }
     }
     msg += `${waTr.paymentMethod || '*Método de Pago:*'} ${paymentStr}\n`;
     msg += `${waTr.deliveryHours || '*Horario Reparto:* 20:00 - 00:00 Noche'}\n`;
@@ -1936,18 +2381,50 @@ function sendOrderViaWhatsApp() {
     window.open(waUrl, "_blank");
 
     const orderData = {
+        id: "ord_" + Date.now(),
         orderNumber,
         customerName: name,
         customerSurname: document.getElementById("custSurname")?.value.trim() || "",
         phone: phone,
         orderType: orderTypeStr,
         address: orderType === "delivery" ? address : "Recogida en local",
+        location: selectedCoords ? {
+            lat: selectedCoords.lat,
+            lng: selectedCoords.lng,
+            mapsUrl: `https://maps.google.com/?q=${selectedCoords.lat},${selectedCoords.lng}`
+        } : null,
         paymentMethod: paymentStr,
         notes: notes,
         items: [...cart],
         deliveryCost: deliveryCost,
-        total: finalTotal
+        subtotal: subtotal,
+        total: finalTotal,
+        status: "submitted",
+        createdAt: new Date().toISOString()
     };
+
+    // Also register order in backend API asynchronously
+    fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            customerName: name,
+            customerSurname: orderData.customerSurname,
+            phone: phone,
+            orderType: orderType,
+            address: orderData.address,
+            location: orderData.location,
+            paymentMethod: paymentRadio && paymentRadio.value === "card" ? "card" : "cash",
+            notes: notes,
+            items: cart.map(i => ({ id: i.id || i.productId, name: i.name, quantity: i.quantity, unitPrice: i.unitPrice }))
+        })
+    }).then(res => res.json()).then(data => {
+        if (data && data.order) {
+            localStorage.setItem("alkarram_active_order_id", data.order.id);
+            localStorage.setItem("alkarram_active_order_number", data.order.orderNumber);
+            startOrderTracking(data.order.id);
+        }
+    }).catch(() => {});
 
     closeCheckoutModal();
     showConfirmationModal(orderData);
@@ -1956,7 +2433,6 @@ function sendOrderViaWhatsApp() {
     saveCartToStorage();
     updateCartUI();
 }
-
 
 /* ==========================================
         ORDER CONFIRMATION MODAL
@@ -1976,13 +2452,14 @@ function showConfirmationModal(order) {
     const totalEl = document.getElementById("confOrderTotal");
     const itemsListEl = document.getElementById("confItemsList");
 
-    if (numEl) numEl.innerText = `#${order.orderNumber}`;
-    if (nameEl) nameEl.innerText = `${order.customerName} ${order.customerSurname}`.trim();
-    if (phoneEl) phoneEl.innerText = order.phone;
-    if (typeEl) typeEl.innerText = order.orderType;
+    const orderNum = order.orderNumber || order.id || "AK-00000";
+    if (numEl) numEl.innerText = `#${orderNum}`;
+    if (nameEl) nameEl.innerText = `${order.customerName || ''} ${order.customerSurname || ''}`.trim();
+    if (phoneEl) phoneEl.innerText = order.phone || '';
+    if (typeEl) typeEl.innerText = order.orderType || '';
 
     if (addrRow && addrEl) {
-        if (order.address && order.address !== "Recogida en local") {
+        if (order.address && order.address !== "Recogida en local" && order.address !== "recogida") {
             addrRow.style.display = "flex";
             addrEl.innerText = order.address;
         } else {
@@ -1990,25 +2467,28 @@ function showConfirmationModal(order) {
         }
     }
 
-    if (payEl) payEl.innerText = order.paymentMethod;
-    if (totalEl) totalEl.innerText = formatEuro(order.total);
+    if (payEl) payEl.innerText = order.paymentMethod || '';
+    const totalAmount = typeof order.total === "number" ? order.total : parseFloat(order.total || 0);
+    if (totalEl) totalEl.innerText = formatEuro(totalAmount);
 
-    if (itemsListEl) {
+    if (itemsListEl && order.items) {
         let itemsHtml = order.items.map(item => {
-            const tInfo = (window.tProduct && window.tProduct(item.productId)) || { name: item.name };
+            const tInfo = (window.tProduct && window.tProduct(item.productId || item.id)) || { name: item.name };
+            const uPrice = typeof item.unitPrice === "number" ? item.unitPrice : parseFloat(item.unitPrice || 0);
             return `
                 <div class="receipt-item-line">
-                    <span>${item.quantity}x ${tInfo.name}</span>
-                    <strong>${formatEuro(item.unitPrice * item.quantity)}</strong>
+                    <span>${item.quantity}x ${tInfo.name || item.name}</span>
+                    <strong>${formatEuro(uPrice * item.quantity)}</strong>
                 </div>
             `;
         }).join("");
 
-        if (order.deliveryCost && order.deliveryCost > 0) {
+        const delCost = typeof order.deliveryCost === "number" ? order.deliveryCost : parseFloat(order.deliveryCost || 0);
+        if (delCost > 0) {
             itemsHtml += `
                 <div class="receipt-item-line">
                     <span>Delivery</span>
-                    <strong>${formatEuro(order.deliveryCost)}</strong>
+                    <strong>${formatEuro(delCost)}</strong>
                 </div>
             `;
         }
@@ -2016,12 +2496,15 @@ function showConfirmationModal(order) {
         itemsListEl.innerHTML = itemsHtml;
     }
 
+    // Update real-time tracking stepper
+    updateTrackingStepper(order.status || "submitted", order.orderType);
+
     // Setup WhatsApp button in confirmation
     const waBtn = document.getElementById("confSendWhatsAppBtn");
     if (waBtn) {
         waBtn.onclick = () => {
             const template = window.t ? window.t("whatsapp.confirmCopy", "Hola Al Karram Kebab, confirmo mi pedido *#{orderNumber}* a nombre de {name} por valor de {total}. ¡Muchas gracias!") : "Hola Al Karram Kebab, confirmo mi pedido *#{orderNumber}* a nombre de {name} por valor de {total}. ¡Muchas gracias!";
-            let msg = template.replace('{orderNumber}', order.orderNumber).replace('{name}', order.customerName).replace('{total}', formatEuro(order.total));
+            let msg = template.replace('{orderNumber}', orderNum).replace('{name}', order.customerName || '').replace('{total}', formatEuro(totalAmount));
             window.open(`https://wa.me/34611168163?text=${encodeURIComponent(msg)}`, "_blank");
         };
     }
@@ -2210,6 +2693,34 @@ function setupEventListeners() {
 
     const waOrderBtn = document.getElementById("orderViaWhatsAppBtn");
     if (waOrderBtn) waOrderBtn.addEventListener("click", sendOrderViaWhatsApp);
+
+    // Location detector & Map listeners
+    const detectBtn = document.getElementById("btnDetectLocation");
+    if (detectBtn) detectBtn.addEventListener("click", detectCurrentLocation);
+
+    const toggleChangeLoc = document.getElementById("btnToggleChangeLoc");
+    const changeLocPanel = document.getElementById("changeLocPanel");
+    if (toggleChangeLoc && changeLocPanel) {
+        toggleChangeLoc.addEventListener("click", () => {
+            changeLocPanel.style.display = (changeLocPanel.style.display === "none" || !changeLocPanel.style.display) ? "block" : "none";
+        });
+    }
+
+    const searchLocBtn = document.getElementById("btnSearchAddress");
+    if (searchLocBtn) searchLocBtn.addEventListener("click", searchAddressMontilla);
+
+    const manualLocInput = document.getElementById("manualLocationInput");
+    if (manualLocInput) {
+        manualLocInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                searchAddressMontilla();
+            }
+        });
+    }
+
+    const confirmLocBtn = document.getElementById("btnConfirmLocation");
+    if (confirmLocBtn) confirmLocBtn.addEventListener("click", confirmDeliveryLocation);
 
     // Confirmation Modal triggers
     const confClose = document.getElementById("confCloseBtn");

@@ -22,6 +22,10 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
+    <!-- Leaflet CSS & JS for Free OpenStreetMap Delivery Location -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -40,6 +44,9 @@
             <span><i class="fa-solid fa-location-dot"></i> <span data-i18n="topBar.address">Calle Corredera 46, Local 3, Montilla (Córdoba)</span></span>
             <span class="dot-sep">•</span>
             <span><i class="fa-solid fa-motorcycle"></i> <span data-i18n="topBar.delivery" id="topBarDeliveryText">Domicilio: <strong>20:00 a 00:00 Noche</strong></span></span>
+            <span class="dot-sep">•</span>
+            <a href="owner.html" class="owner-portal-link" title="Panel de gestión de pedidos"><i class="fa-solid fa-shield-halved"></i> Panel Dueño</a>
+            <a href="javascript:void(0)" class="active-order-header-pill" id="headerActiveOrderPill" style="display:none;" title="Ver estado del pedido activo"><i class="fa-solid fa-receipt"></i> <span id="headerActiveOrderText">Ver mi Pedido</span></a>
         </div>
         <div class="top-bar-right">
             <span><i class="fa-solid fa-phone"></i> <span data-i18n="topBar.orders">Pedidos:</span> <a href="tel:611168163">611 168 163</a> / <a href="tel:611696343">611 696 343</a>
@@ -618,7 +625,54 @@
             <!-- Address (Conditional for delivery) -->
             <div class="form-section" id="addressSection">
                 <label class="form-section-title" data-i18n="checkout.step3">3. Dirección de entrega en Montilla</label>
-                <div class="form-group">
+
+                <!-- KFC-style Geolocation Detector Card -->
+                <div class="location-detector-card">
+                    <div class="loc-detect-top">
+                        <button type="button" class="btn-detect-loc" id="btnDetectLocation">
+                            <i class="fa-solid fa-crosshairs"></i> <span>Detectar mi ubicación actual</span>
+                        </button>
+                        <span class="loc-hint"><i class="fa-solid fa-location-dot"></i> Montilla (Córdoba)</span>
+                    </div>
+
+                    <div class="location-status-box" id="locationStatusBox" style="display: none;">
+                        <div class="loc-status-header">
+                            <span class="loc-badge" id="locBadgeStatus"><i class="fa-solid fa-circle-check"></i> Ubicación detectada</span>
+                            <button type="button" class="btn-change-loc" id="btnToggleChangeLoc">
+                                <i class="fa-solid fa-pen-to-square"></i> Cambiar ubicación
+                            </button>
+                        </div>
+                        <div class="loc-detected-address" id="detectedAddressSpan">Calle Corredera 46, Montilla</div>
+                    </div>
+
+                    <div class="change-loc-panel" id="changeLocPanel" style="display: none;">
+                        <div class="loc-search-row">
+                            <input type="text" id="manualLocationInput" placeholder="Escribe tu calle o punto en Montilla (ej: Av. Andalucía 12)...">
+                            <button type="button" class="btn-loc-search" id="btnSearchAddress">
+                                <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="delivery-map-container" id="deliveryMapContainer" style="display: none; margin-top: 10px;">
+                        <div id="deliveryMap" style="width: 100%; height: 100%;"></div>
+                    </div>
+                    <div class="loc-map-help" id="locMapHelp" style="display: none;">
+                        <i class="fa-solid fa-hand-pointer"></i> Arrastra el marcador en el mapa para afinar tu portal exacto.
+                    </div>
+
+                    <div class="loc-confirm-banner" id="locConfirmBanner" style="display: none; margin-top: 10px;">
+                        <div>
+                            <strong><i class="fa-solid fa-map-pin"></i> Ubicación:</strong>
+                            <span id="confirmedAddressText">-</span>
+                        </div>
+                        <button type="button" class="btn-confirm-loc" id="btnConfirmLocation">
+                            <i class="fa-solid fa-check"></i> Confirmar ubicación
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 14px;">
                     <label for="custAddress"><span data-i18n="checkout.addressLabel">Calle, Número, Piso y Puerta</span> <span class="required">*</span></label>
                     <input type="text" id="custAddress" placeholder="Ej: Calle Corredera, 12, 2ºB">
                     <span class="error-msg" id="custAddressError">Introduce la dirección de entrega</span>
@@ -707,6 +761,39 @@
         </div>
         <h2 data-i18n="confirmation.title">¡Pedido realizado correctamente!</h2>
         <p class="conf-sub">El equipo de <strong>Al Karram Kebab</strong> ha recibido tu pedido y se pondrá a prepararlo de inmediato.</p>
+
+        <!-- Live Order Tracking Stepper -->
+        <div class="order-tracking-card" id="orderTrackingCard">
+            <div class="tracking-card-header">
+                <span class="tracking-title"><i class="fa-solid fa-route"></i> Estado del Pedido en Tiempo Real</span>
+                <span class="tracking-live-pill"><span class="pulse-dot"></span> En vivo</span>
+            </div>
+            <div class="tracking-stepper" id="trackingStepper">
+                <div class="tracking-step active" id="step-submitted">
+                    <div class="step-icon-wrap"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <div class="step-label">Recibido</div>
+                </div>
+                <div class="tracking-step" id="step-accepted">
+                    <div class="step-icon-wrap"><i class="fa-solid fa-thumbs-up"></i></div>
+                    <div class="step-label">Aceptado</div>
+                </div>
+                <div class="tracking-step" id="step-preparing">
+                    <div class="step-icon-wrap"><i class="fa-solid fa-fire-burner"></i></div>
+                    <div class="step-label">En Cocina</div>
+                </div>
+                <div class="tracking-step" id="step-transit">
+                    <div class="step-icon-wrap" id="transitIconWrap"><i class="fa-solid fa-motorcycle" id="transitStepIcon"></i></div>
+                    <div class="step-label" id="transitStepLabel">En Reparto</div>
+                </div>
+                <div class="tracking-step" id="step-completed">
+                    <div class="step-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="step-label">Entregado</div>
+                </div>
+            </div>
+            <div class="tracking-refresh-hint" id="trackingRefreshHint">
+                <i class="fa-solid fa-rotate fa-spin"></i> Conectado con Al Karram Kebab en directo
+            </div>
+        </div>
 
         <div class="order-receipt-card">
             <div class="receipt-header">

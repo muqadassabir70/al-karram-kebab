@@ -1,0 +1,13 @@
+{
+  "name": "alkarram-kebab",
+  "version": "2.0.0",
+  "description": "Al Karram Kebab - Online Restaurant Ordering System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.14.0"
+  }
+}

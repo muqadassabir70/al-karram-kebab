@@ -1,0 +1,104 @@
+/* ==================================================
+        AL KARRAM KEBAB - OWNER AUTHENTICATION API
+================================================== */
+const crypto = require('crypto');
+
+function getSecret() {
+    return process.env.JWT_SECRET || 'alkarram_super_secret_jwt_key_2026';
+}
+
+function getOwnerPassword() {
+    return process.env.OWNER_PASSWORD || 'alkarram2026';
+}
+
+function createToken(payload) {
+    const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+    const body = Buffer.from(JSON.stringify({ ...payload, exp: Date.now() + 86400000 * 7 })).toString('base64url');
+    const signature = crypto.createHmac('sha256', getSecret()).update(header + '.' + body).digest('base64url');
+    return header + '.' + body + '.' + signature;
+}
+
+function verifyToken(token) {
+    if (!token || typeof token !== 'string') return null;
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const [header, body, signature] = parts;
+    const expected = crypto.createHmac('sha256', getSecret()).update(header + '.' + body).digest('base64url');
+    if (expected !== signature) return null;
+    try {
+        const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+        if (payload.exp && payload.exp < Date.now()) return null;
+        return payload;
+    } catch (e) {
+        return null;
+    }
+}
+
+function parseJsonBody(req) {
+    return new Promise((resolve) => {
+        if (req.body && typeof req.body === 'object') {
+            return resolve(req.body);
+        }
+        let data = '';
+        req.on('data', chunk => { data += chunk; });
+        req.on('end', () => {
+            try {
+                resolve(data ? JSON.parse(data) : {});
+            } catch (e) {
+                resolve({});
+            }
+        });
+    });
+}
+
+function sendJson(res, statusCode, data) {
+    res.statusCode = statusCode;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.end(JSON.stringify(data));
+}
+
+module.exports = async function handler(req, res) {
+    if (req.method === 'OPTIONS') {
+        res.statusCode = 200;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        return res.end();
+    }
+
+    if (req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        const password = (body && body.password) ? String(body.password).trim() : '';
+        const correctPassword = getOwnerPassword();
+
+        if (!password || password !== correctPassword) {
+            return sendJson(res, 401, { success: false, message: 'Contraseña de propietario incorrecta' });
+        }
+
+        const token = createToken({ role: 'owner', loginTime: Date.now() });
+        return sendJson(res, 200, {
+            success: true,
+            token,
+            message: 'Autenticación correcta'
+        });
+    }
+
+    if (req.method === 'GET') {
+        const authHeader = req.headers['authorization'] || '';
+        const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+        const verified = verifyToken(token);
+
+        if (!verified || verified.role !== 'owner') {
+            return sendJson(res, 401, { success: false, authenticated: false });
+        }
+
+        return sendJson(res, 200, { success: true, authenticated: true });
+    }
+
+    return sendJson(res, 405, { success: false, message: 'Method not allowed' });
+};
+
+module.exports.verifyToken = verifyToken;
