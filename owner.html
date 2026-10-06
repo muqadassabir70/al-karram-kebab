@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Pedidos | Al Karram Kebab</title>
+    <!-- PWA & Mobile Web App Meta (iOS + Android) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D62828">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Al Karram Owner">
+    <link rel="apple-touch-icon" href="/assets/images/combo.png">
+    <link rel="icon" type="image/png" href="/assets/images/combo.png">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -230,6 +239,165 @@
             white-space: nowrap;
         }
         .btn-dismiss-push:hover { color: #fff; border-color: #94A3B8; }
+
+        /* iOS Banner & Modal Styles */
+        .push-permission-banner.ios-banner {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            border: 1px solid #3B82F6;
+        }
+        .push-banner-icon.ios-icon {
+            background: rgba(59, 130, 246, 0.2);
+            color: #38BDF8;
+        }
+        .ios-steps-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #CBD5E1;
+        }
+        .ios-steps-preview span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ios-steps-preview strong {
+            color: #38BDF8;
+        }
+
+        /* iOS Help Modal */
+        .ios-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .ios-modal-box {
+            background: #1E293B;
+            color: #fff;
+            border-radius: 18px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid #334155;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: modalPopIn 0.25s ease-out;
+        }
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .ios-modal-header {
+            padding: 16px 20px;
+            background: #0F172A;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ios-modal-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            color: #F8FAFC;
+        }
+        .ios-modal-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 2px 6px;
+            line-height: 1;
+            border-radius: 6px;
+        }
+        .ios-modal-close:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .ios-modal-body {
+            padding: 20px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+        .ios-modal-notice {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #93C5FD;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .ios-modal-step {
+            background: #0F172A;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .ios-modal-step:last-child { margin-bottom: 0; }
+        .ios-modal-step-badge {
+            background: var(--primary);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .ios-modal-step h5 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #F8FAFC;
+            font-family: 'Poppins', sans-serif;
+        }
+        .ios-modal-step p {
+            font-size: 12px;
+            color: #94A3B8;
+            line-height: 1.45;
+            margin: 0;
+        }
+        .ios-modal-footer {
+            padding: 14px 20px;
+            background: #0F172A;
+            border-top: 1px solid #334155;
+            text-align: right;
+        }
+        .btn-ios-close {
+            background: #3B82F6;
+            color: #fff;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-ios-close:hover { background: #2563EB; }
 
         /* Banner Notification */
         .new-order-banner {
@@ -563,20 +731,43 @@
         </div>
 
         <main class="dash-container">
-            <!-- Push Notification Permission Banner -->
+            <!-- Push Notification Permission Banner (Android / Desktop / Standalone) -->
             <div class="push-permission-banner" id="pushPermissionBanner" style="display: none;">
                 <div class="push-banner-content">
                     <div class="push-banner-icon">
                         <i class="fa-solid fa-bell"></i>
                     </div>
                     <div>
-                        <h4 data-i18n="owner.pushTitle">Activar Notificaciones de Nuevos Pedidos</h4>
-                        <p data-i18n="owner.pushDesc">Permite las notificaciones para recibir alertas sonoras en tu móvil cada vez que entre un nuevo pedido, incluso con la pantalla apagada o la web cerrada.</p>
+                        <h4 id="pushBannerTitle" data-i18n="owner.pushTitle">Activar Notificaciones de Nuevos Pedidos</h4>
+                        <p id="pushBannerDesc" data-i18n="owner.pushDesc">Permite las notificaciones para recibir alertas sonoras en tu móvil cada vez que entre un nuevo pedido, incluso con la pantalla apagada o la web cerrada.</p>
                     </div>
                 </div>
                 <div class="push-banner-actions">
                     <button class="btn-enable-push" id="btnEnablePush" data-i18n="owner.enablePushBtn">Activar Notificaciones</button>
                     <button class="btn-dismiss-push" id="btnDismissPush" data-i18n="owner.dismissPushBtn">Ahora no</button>
+                </div>
+            </div>
+
+            <!-- iOS Safari (Non-Standalone) Push Notification Guidance Banner -->
+            <div class="push-permission-banner ios-banner" id="pushPermissionBannerIOS" style="display: none;">
+                <div class="push-banner-content">
+                    <div class="push-banner-icon ios-icon">
+                        <i class="fa-brands fa-apple"></i>
+                    </div>
+                    <div>
+                        <h4 data-i18n="owner.iosPushTitle">iPhone / iOS: Añade a Pantalla de Inicio para Notificaciones</h4>
+                        <p data-i18n="owner.iosPushDesc">Apple requiere añadir el Panel a la Pantalla de Inicio para poder recibir alertas con sonido cuando la pantalla esté bloqueada o la app cerrada.</p>
+                        <div class="ios-steps-preview">
+                            <span><strong>1.</strong> <span data-i18n="owner.iosStep1">Abre esta web en Safari (iOS 16.4+)</span></span>
+                            <span><strong>2.</strong> <span data-i18n="owner.iosStep2">Pulsa el botón Compartir de Safari</span> <i class="fa-solid fa-arrow-up-from-bracket" style="color: #38BDF8; font-size: 13px;"></i></span>
+                            <span><strong>3.</strong> <span data-i18n="owner.iosStep3">Toca 'Añadir a pantalla de inicio'</span> <i class="fa-regular fa-square-plus" style="color: #38BDF8; font-size: 13px;"></i></span>
+                            <span><strong>4.</strong> <span data-i18n="owner.iosStep4">Abre la app instalada y activa las notificaciones</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="push-banner-actions">
+                    <button class="btn-enable-push" id="btnShowIosHelp" style="background: #2563EB;" data-i18n="owner.iosHelpBtn">Instrucciones para iPhone</button>
+                    <button class="btn-dismiss-push" id="btnDismissIosPush" data-i18n="owner.dismissPushBtn">Ahora no</button>
                 </div>
             </div>
 
@@ -1189,14 +1380,79 @@
             return outputArray;
         }
 
+        // ==========================================
+        // WEB PUSH NOTIFICATIONS (ANDROID + iOS)
+        // ==========================================
+        let swReg = null;
+
+        // Platform detection: iOS vs Android / Desktop
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isStandalone = ('standalone' in window.navigator && window.navigator.standalone) ||
+                             window.matchMedia('(display-mode: standalone)').matches;
+
+        function openIosHelpModal() {
+            const modal = document.getElementById('iosHelpModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeIosHelpModal() {
+            const modal = document.getElementById('iosHelpModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+            const base64 = (base64String + padding)
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
         async function initPushNotifications() {
             const pushBtn = document.getElementById('pushToggleBtn');
-            const banner = document.getElementById('pushPermissionBanner');
+            const generalBanner = document.getElementById('pushPermissionBanner');
+            const iosBanner = document.getElementById('pushPermissionBannerIOS');
 
+            // Configure platform-appropriate text
+            const titleEl = document.getElementById('pushBannerTitle');
+            const descEl = document.getElementById('pushBannerDesc');
+
+            if (isIOS) {
+                if (isStandalone) {
+                    if (titleEl) titleEl.setAttribute('data-i18n', 'owner.iosStandaloneTitle');
+                    if (descEl) descEl.setAttribute('data-i18n', 'owner.iosStandaloneDesc');
+                }
+            } else {
+                if (titleEl) titleEl.setAttribute('data-i18n', 'owner.pushTitle');
+                if (descEl) descEl.setAttribute('data-i18n', 'owner.androidPushDesc');
+            }
+            applyOwnerTranslations();
+
+            // iOS Non-Standalone PWA: Apple requires adding to Home Screen first
+            if (isIOS && !isStandalone) {
+                if (pushBtn) pushBtn.style.display = 'inline-flex';
+                if (generalBanner) generalBanner.style.display = 'none';
+
+                const dismissedIos = localStorage.getItem('alkarram_push_ios_dismissed');
+                if (!dismissedIos && iosBanner) {
+                    iosBanner.style.display = 'flex';
+                }
+                await updatePushUI();
+                return;
+            }
+
+            // Android, Desktop, or iOS Standalone PWA:
             if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
                 console.log('Push notifications not supported on this browser/environment.');
                 if (pushBtn) pushBtn.style.display = 'none';
-                if (banner) banner.style.display = 'none';
+                if (generalBanner) generalBanner.style.display = 'none';
+                if (iosBanner) iosBanner.style.display = 'none';
                 return;
             }
 
@@ -1220,8 +1476,8 @@
                     }
                 } else if (Notification.permission === 'default') {
                     const dismissed = localStorage.getItem('alkarram_push_dismissed');
-                    if (!dismissed && banner) {
-                        banner.style.display = 'flex';
+                    if (!dismissed && generalBanner) {
+                        generalBanner.style.display = 'flex';
                     }
                 }
             } catch (err) {
@@ -1232,12 +1488,26 @@
         async function updatePushUI() {
             const pushBtn = document.getElementById('pushToggleBtn');
             const pushStatusText = document.getElementById('pushStatusText');
-            const banner = document.getElementById('pushPermissionBanner');
+            const generalBanner = document.getElementById('pushPermissionBanner');
+            const iosBanner = document.getElementById('pushPermissionBannerIOS');
+
+            // On iOS non-standalone, guide user to Home Screen
+            if (isIOS && !isStandalone) {
+                if (pushBtn) {
+                    pushBtn.classList.remove('active', 'blocked');
+                    pushBtn.title = window.t ? window.t('owner.iosHelpBtn', 'Instrucciones para iPhone') : 'Instrucciones para iPhone';
+                }
+                if (pushStatusText) {
+                    pushStatusText.innerText = window.t ? window.t('owner.iosHelpBtn', 'Añadir a Inicio (iOS)') : 'Añadir a Inicio (iOS)';
+                }
+                return;
+            }
 
             if (!('Notification' in window)) return;
 
             if (Notification.permission === 'granted') {
-                if (banner) banner.style.display = 'none';
+                if (generalBanner) generalBanner.style.display = 'none';
+                if (iosBanner) iosBanner.style.display = 'none';
                 if (pushBtn) {
                     pushBtn.classList.add('active');
                     pushBtn.classList.remove('blocked');
@@ -1246,7 +1516,8 @@
                     pushStatusText.innerText = window.t ? window.t('owner.pushActive', 'Notificaciones Activas') : 'Notificaciones Activas';
                 }
             } else if (Notification.permission === 'denied') {
-                if (banner) banner.style.display = 'none';
+                if (generalBanner) generalBanner.style.display = 'none';
+                if (iosBanner) iosBanner.style.display = 'none';
                 if (pushBtn) {
                     pushBtn.classList.remove('active');
                     pushBtn.classList.add('blocked');
@@ -1266,13 +1537,21 @@
         }
 
         async function subscribeUserToPush(showSuccessAlert = true) {
-            const banner = document.getElementById('pushPermissionBanner');
+            if (isIOS && !isStandalone) {
+                openIosHelpModal();
+                return;
+            }
+
+            const generalBanner = document.getElementById('pushPermissionBanner');
             const enableBtn = document.getElementById('btnEnablePush');
             if (enableBtn) enableBtn.disabled = true;
 
             try {
                 if (Notification.permission === 'denied') {
-                    alert(window.t ? window.t('owner.pushBlocked', 'Las notificaciones están bloqueadas en los ajustes del navegador. Por favor habilítalas manualmente.') : 'Las notificaciones están bloqueadas en los ajustes del navegador.');
+                    const msg = isIOS
+                        ? (window.t ? window.t('owner.pushBlocked') : 'Las notificaciones están bloqueadas en Ajustes de iOS. Ve a Ajustes > Al Karram Owner > Notificaciones y actívalas.')
+                        : (window.t ? window.t('owner.pushBlocked') : 'Las notificaciones están bloqueadas en los ajustes del navegador. Por favor habilítalas manualmente.');
+                    alert(msg);
                     if (enableBtn) enableBtn.disabled = false;
                     return;
                 }
@@ -1280,7 +1559,7 @@
                 const permResult = await Notification.requestPermission();
                 if (permResult !== 'granted') {
                     console.log('Notification permission outcome:', permResult);
-                    if (banner) banner.style.display = 'none';
+                    if (generalBanner) generalBanner.style.display = 'none';
                     await updatePushUI();
                     if (enableBtn) enableBtn.disabled = false;
                     return;
@@ -1312,7 +1591,7 @@
                 await syncPushSubscriptionWithBackend(subscription);
 
                 localStorage.removeItem('alkarram_push_dismissed');
-                if (banner) banner.style.display = 'none';
+                if (generalBanner) generalBanner.style.display = 'none';
                 await updatePushUI();
 
                 if (showSuccessAlert) {
@@ -1361,18 +1640,107 @@
             });
         }
 
+        const btnShowIosHelp = document.getElementById('btnShowIosHelp');
+        if (btnShowIosHelp) {
+            btnShowIosHelp.addEventListener('click', openIosHelpModal);
+        }
+
+        const btnCloseIosHelp = document.getElementById('btnCloseIosHelp');
+        if (btnCloseIosHelp) {
+            btnCloseIosHelp.addEventListener('click', closeIosHelpModal);
+        }
+
+        const btnCloseIosHelpX = document.getElementById('btnCloseIosHelpX');
+        if (btnCloseIosHelpX) {
+            btnCloseIosHelpX.addEventListener('click', closeIosHelpModal);
+        }
+
+        const iosHelpModal = document.getElementById('iosHelpModal');
+        if (iosHelpModal) {
+            iosHelpModal.addEventListener('click', (e) => {
+                if (e.target === iosHelpModal) closeIosHelpModal();
+            });
+        }
+
+        const btnDismissIosPush = document.getElementById('btnDismissIosPush');
+        if (btnDismissIosPush) {
+            btnDismissIosPush.addEventListener('click', () => {
+                localStorage.setItem('alkarram_push_ios_dismissed', 'true');
+                const banner = document.getElementById('pushPermissionBannerIOS');
+                if (banner) banner.style.display = 'none';
+            });
+        }
+
         const pushToggleBtn = document.getElementById('pushToggleBtn');
         if (pushToggleBtn) {
             pushToggleBtn.addEventListener('click', () => {
+                if (isIOS && !isStandalone) {
+                    openIosHelpModal();
+                    return;
+                }
                 if (Notification.permission === 'granted') {
                     alert(window.t ? window.t('owner.pushSuccess') : '✅ Notificaciones activas en este dispositivo.');
                 } else if (Notification.permission === 'denied') {
-                    alert(window.t ? window.t('owner.pushBlocked') : 'Notificaciones bloqueadas en el navegador. Por favor habilítalas en la configuración de permisos del sitio.');
+                    const msg = isIOS
+                        ? (window.t ? window.t('owner.pushBlocked') : 'Notificaciones bloqueadas en Ajustes de iOS.')
+                        : (window.t ? window.t('owner.pushBlocked') : 'Notificaciones bloqueadas en el navegador.');
+                    alert(msg);
                 } else {
                     subscribeUserToPush(true);
                 }
             });
         }
     </script>
+
+    <!-- iOS Step-by-Step Guidance Modal -->
+    <div class="ios-modal-overlay" id="iosHelpModal">
+        <div class="ios-modal-box">
+            <div class="ios-modal-header">
+                <h3><i class="fa-brands fa-apple" style="color: #38BDF8;"></i> <span data-i18n="owner.iosModalTitle">Cómo Activar Notificaciones en iPhone (iOS)</span></h3>
+                <button type="button" class="ios-modal-close" id="btnCloseIosHelpX" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="ios-modal-body">
+                <div class="ios-modal-notice">
+                    <i class="fa-solid fa-circle-info" style="font-size: 16px; margin-top: 2px;"></i>
+                    <span data-i18n="owner.iosPushDesc">Apple requiere añadir el Panel a la Pantalla de Inicio para poder recibir alertas con sonido cuando la pantalla esté bloqueada o la app cerrada.</span>
+                </div>
+
+                <div class="ios-modal-step">
+                    <div class="ios-modal-step-badge">1</div>
+                    <div>
+                        <h5>1. Safari en iOS 16.4+</h5>
+                        <p data-i18n="owner.iosStep1">Abre esta web en Safari (iOS 16.4 o superior).</p>
+                    </div>
+                </div>
+
+                <div class="ios-modal-step">
+                    <div class="ios-modal-step-badge">2</div>
+                    <div>
+                        <h5>2. Botón Compartir <i class="fa-solid fa-arrow-up-from-bracket" style="color: #38BDF8;"></i></h5>
+                        <p data-i18n="owner.iosStep2">Pulsa el botón Compartir de Safari (icono del cuadrado con flecha hacia arriba en la barra inferior).</p>
+                    </div>
+                </div>
+
+                <div class="ios-modal-step">
+                    <div class="ios-modal-step-badge">3</div>
+                    <div>
+                        <h5>3. Añadir a pantalla de inicio <i class="fa-regular fa-square-plus" style="color: #38BDF8;"></i></h5>
+                        <p data-i18n="owner.iosStep3">Desplázate hacia abajo y toca 'Añadir a pantalla de inicio'.</p>
+                    </div>
+                </div>
+
+                <div class="ios-modal-step">
+                    <div class="ios-modal-step-badge">4</div>
+                    <div>
+                        <h5>4. Abrir app y Activar</h5>
+                        <p data-i18n="owner.iosStep4">Abre la nueva app 'Al Karram Owner' desde tu pantalla de inicio, inicia sesión y pulsa 'Activar Notificaciones'.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ios-modal-footer">
+                <button type="button" class="btn-ios-close" id="btnCloseIosHelp" data-i18n="owner.iosModalClose">Entendido</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -79,6 +79,7 @@ module.exports = async function handler(req, res) {
                     auth: sub.keys.auth
                 },
                 role: 'owner',
+                platform: (req.headers && req.headers['user-agent'] && /iphone|ipad|ipod/i.test(req.headers['user-agent'])) ? 'ios' : 'android_or_desktop',
                 userAgent: (req.headers && req.headers['user-agent']) || 'Unknown',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()

@@ -7289,7 +7289,19 @@ const SYSTEM_EXTENSIONS = {
       pushActive: "Notificaciones Activas",
       pushBlocked: "Notificaciones Bloqueadas",
       pushUnsupported: "Notificaciones no soportadas en este navegador",
-      pushSuccess: "✅ Notificaciones activadas con éxito. Recibirás avisos de nuevos pedidos incluso con la pantalla apagada."
+      pushSuccess: "✅ Notificaciones activadas con éxito. Recibirás avisos de nuevos pedidos incluso con la pantalla apagada.",
+      iosPushTitle: "iPhone / iOS: Añade a Pantalla de Inicio para Notificaciones",
+      iosPushDesc: "Apple requiere añadir el Panel a la Pantalla de Inicio para recibir alertas con sonido cuando la pantalla esté bloqueada o la app cerrada.",
+      iosStep1: "Abre esta web en Safari (iOS 16.4 o superior).",
+      iosStep2: "Pulsa el botón Compartir de Safari (icono del cuadrado con flecha hacia arriba).",
+      iosStep3: "Toca 'Añadir a pantalla de inicio' (icono del +).",
+      iosStep4: "Abre la nueva app 'Al Karram Owner' desde tu inicio y activa las notificaciones.",
+      iosStandaloneTitle: "Notificaciones Push en tu iPhone",
+      iosStandaloneDesc: "Pulsa 'Activar Notificaciones' para permitir avisos sonoros de nuevos pedidos en tu iPhone, incluso con la pantalla apagada.",
+      iosHelpBtn: "Instrucciones para iPhone",
+      iosModalTitle: "Cómo Activar Notificaciones en iPhone (iOS)",
+      iosModalClose: "Entendido",
+      androidPushDesc: "Activa las notificaciones para recibir alertas sonoras en tu móvil cada vez que entre un nuevo pedido, incluso con la pantalla apagada o la web cerrada."
     }
   },
   en: {
@@ -7399,7 +7411,19 @@ const SYSTEM_EXTENSIONS = {
       pushActive: "Notifications Active",
       pushBlocked: "Notifications Blocked",
       pushUnsupported: "Notifications not supported on this browser",
-      pushSuccess: "✅ Push notifications enabled! You will be alerted when new orders arrive even when the panel is closed."
+      pushSuccess: "✅ Push notifications enabled! You will be alerted when new orders arrive even when the panel is closed.",
+      iosPushTitle: "iPhone / iOS: Add to Home Screen for Push Notifications",
+      iosPushDesc: "Apple requires adding the Owner Panel to your Home Screen to receive sound alerts when your phone is locked or the app is closed.",
+      iosStep1: "Open this website in Safari (iOS 16.4 or later).",
+      iosStep2: "Tap the Safari Share button (the square with an arrow pointing up).",
+      iosStep3: "Scroll and tap 'Add to Home Screen' (plus icon).",
+      iosStep4: "Launch 'Al Karram Owner' from your Home Screen and enable notifications.",
+      iosStandaloneTitle: "Push Notifications on your iPhone",
+      iosStandaloneDesc: "Tap 'Enable Notifications' to receive sound alerts on your iPhone even when your screen is locked.",
+      iosHelpBtn: "iPhone Instructions",
+      iosModalTitle: "How to Enable Notifications on iPhone (iOS)",
+      iosModalClose: "Got it",
+      androidPushDesc: "Enable notifications to receive sound alerts on your Android device whenever a new order arrives, even when the panel is in the background or closed."
     }
   }
 };
