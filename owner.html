@@ -156,6 +156,81 @@
         .audio-toggle:hover, .btn-logout:hover, .btn-refresh:hover { background: rgba(255,255,255,0.2); }
         .audio-toggle.active { background: #10B981; border-color: #10B981; }
 
+        .push-toggle-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, border-color 0.2s;
+            font-weight: 500;
+        }
+        .push-toggle-btn:hover { background: rgba(255,255,255,0.2); }
+        .push-toggle-btn.active { background: #10B981; border-color: #10B981; }
+        .push-toggle-btn.blocked { background: #EF4444; border-color: #EF4444; }
+
+        .push-permission-banner {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            color: #fff;
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .push-banner-content { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 260px; }
+        .push-banner-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(214, 40, 40, 0.2);
+            color: #EF4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .push-banner-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 3px; font-family: 'Poppins', sans-serif; }
+        .push-banner-content p { font-size: 13px; color: #94A3B8; line-height: 1.4; margin: 0; }
+        .push-banner-actions { display: flex; align-items: center; gap: 10px; }
+        .btn-enable-push {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-enable-push:hover { background: var(--primary-hover); }
+        .btn-dismiss-push {
+            background: transparent;
+            color: #94A3B8;
+            border: 1px solid #475569;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-dismiss-push:hover { color: #fff; border-color: #94A3B8; }
+
         /* Banner Notification */
         .new-order-banner {
             background: var(--primary);
@@ -466,6 +541,9 @@
                     <option value="ar">🇸🇦 AR</option>
                     <option value="ur">🇵🇰 UR</option>
                 </select>
+                <button class="push-toggle-btn" id="pushToggleBtn" title="Notificaciones Push" style="display: none;">
+                    <i class="fa-solid fa-bell"></i> <span id="pushStatusText" data-i18n="owner.enablePushBtn">Notificaciones</span>
+                </button>
                 <button class="audio-toggle active" id="audioToggleBtn" title="Activar/Desactivar sonido">
                     <i class="fa-solid fa-volume-high"></i> <span id="soundBtnText" data-i18n="owner.soundOn">Sonido Activado</span>
                 </button>
@@ -485,6 +563,23 @@
         </div>
 
         <main class="dash-container">
+            <!-- Push Notification Permission Banner -->
+            <div class="push-permission-banner" id="pushPermissionBanner" style="display: none;">
+                <div class="push-banner-content">
+                    <div class="push-banner-icon">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h4 data-i18n="owner.pushTitle">Activar Notificaciones de Nuevos Pedidos</h4>
+                        <p data-i18n="owner.pushDesc">Permite las notificaciones para recibir alertas sonoras en tu móvil cada vez que entre un nuevo pedido, incluso con la pantalla apagada o la web cerrada.</p>
+                    </div>
+                </div>
+                <div class="push-banner-actions">
+                    <button class="btn-enable-push" id="btnEnablePush" data-i18n="owner.enablePushBtn">Activar Notificaciones</button>
+                    <button class="btn-dismiss-push" id="btnDismissPush" data-i18n="owner.dismissPushBtn">Ahora no</button>
+                </div>
+            </div>
+
             <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -583,6 +678,10 @@
                 soundText.innerText = soundEnabled
                     ? (window.t ? window.t('owner.soundOn', 'Sonido Activado') : 'Sonido Activado')
                     : (window.t ? window.t('owner.soundOff', 'Sonido Silenciado') : 'Sonido Silenciado');
+            }
+
+            if (typeof updatePushUI === 'function') {
+                updatePushUI();
             }
         }
 
@@ -732,6 +831,7 @@
             dashboardScreen.style.display = 'block';
             applyOwnerTranslations();
             fetchOrders();
+            initPushNotifications();
             if (pollInterval) clearInterval(pollInterval);
             pollInterval = setInterval(fetchOrders, 4000); // 4 second live polling
         }
@@ -1069,6 +1169,209 @@
             } catch (e) {
                 alert(window.t ? window.t('owner.connectingError', 'Error de conexión al actualizar pedido') : 'Error de conexión al actualizar pedido');
             }
+        }
+
+        // ==========================================
+        // WEB PUSH NOTIFICATIONS FOR OWNER
+        // ==========================================
+        let swReg = null;
+
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+            const base64 = (base64String + padding)
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        async function initPushNotifications() {
+            const pushBtn = document.getElementById('pushToggleBtn');
+            const banner = document.getElementById('pushPermissionBanner');
+
+            if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+                console.log('Push notifications not supported on this browser/environment.');
+                if (pushBtn) pushBtn.style.display = 'none';
+                if (banner) banner.style.display = 'none';
+                return;
+            }
+
+            try {
+                // Register Service Worker
+                swReg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+                console.log('ServiceWorker registered successfully with scope:', swReg.scope);
+
+                if (pushBtn) pushBtn.style.display = 'inline-flex';
+
+                await updatePushUI();
+
+                // If already granted, ensure subscription is synced with server
+                if (Notification.permission === 'granted') {
+                    const sub = await swReg.pushManager.getSubscription();
+                    if (sub) {
+                        await syncPushSubscriptionWithBackend(sub);
+                    } else {
+                        // Permission granted previously but no active subscription, subscribe quietly
+                        await subscribeUserToPush(false);
+                    }
+                } else if (Notification.permission === 'default') {
+                    const dismissed = localStorage.getItem('alkarram_push_dismissed');
+                    if (!dismissed && banner) {
+                        banner.style.display = 'flex';
+                    }
+                }
+            } catch (err) {
+                console.error('Error initializing Service Worker / Push:', err);
+            }
+        }
+
+        async function updatePushUI() {
+            const pushBtn = document.getElementById('pushToggleBtn');
+            const pushStatusText = document.getElementById('pushStatusText');
+            const banner = document.getElementById('pushPermissionBanner');
+
+            if (!('Notification' in window)) return;
+
+            if (Notification.permission === 'granted') {
+                if (banner) banner.style.display = 'none';
+                if (pushBtn) {
+                    pushBtn.classList.add('active');
+                    pushBtn.classList.remove('blocked');
+                }
+                if (pushStatusText) {
+                    pushStatusText.innerText = window.t ? window.t('owner.pushActive', 'Notificaciones Activas') : 'Notificaciones Activas';
+                }
+            } else if (Notification.permission === 'denied') {
+                if (banner) banner.style.display = 'none';
+                if (pushBtn) {
+                    pushBtn.classList.remove('active');
+                    pushBtn.classList.add('blocked');
+                    pushBtn.title = window.t ? window.t('owner.pushBlocked', 'Notificaciones Bloqueadas') : 'Notificaciones Bloqueadas';
+                }
+                if (pushStatusText) {
+                    pushStatusText.innerText = window.t ? window.t('owner.pushBlocked', 'Notificaciones Bloqueadas') : 'Notificaciones Bloqueadas';
+                }
+            } else {
+                if (pushBtn) {
+                    pushBtn.classList.remove('active', 'blocked');
+                }
+                if (pushStatusText) {
+                    pushStatusText.innerText = window.t ? window.t('owner.enablePushBtn', 'Activar Notificaciones') : 'Activar Notificaciones';
+                }
+            }
+        }
+
+        async function subscribeUserToPush(showSuccessAlert = true) {
+            const banner = document.getElementById('pushPermissionBanner');
+            const enableBtn = document.getElementById('btnEnablePush');
+            if (enableBtn) enableBtn.disabled = true;
+
+            try {
+                if (Notification.permission === 'denied') {
+                    alert(window.t ? window.t('owner.pushBlocked', 'Las notificaciones están bloqueadas en los ajustes del navegador. Por favor habilítalas manualmente.') : 'Las notificaciones están bloqueadas en los ajustes del navegador.');
+                    if (enableBtn) enableBtn.disabled = false;
+                    return;
+                }
+
+                const permResult = await Notification.requestPermission();
+                if (permResult !== 'granted') {
+                    console.log('Notification permission outcome:', permResult);
+                    if (banner) banner.style.display = 'none';
+                    await updatePushUI();
+                    if (enableBtn) enableBtn.disabled = false;
+                    return;
+                }
+
+                if (!swReg) {
+                    swReg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+                    await navigator.serviceWorker.ready;
+                }
+
+                // Fetch VAPID public key from backend
+                const keyRes = await fetch('/api/push-subscribe');
+                const keyData = await keyRes.json();
+                if (!keyData.publicKey) {
+                    throw new Error('No se pudo obtener la clave pública VAPID');
+                }
+
+                const convertedVapidKey = urlB64ToUint8Array(keyData.publicKey);
+                let subscription = await swReg.pushManager.getSubscription();
+
+                if (!subscription) {
+                    subscription = await swReg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedVapidKey
+                    });
+                }
+
+                // Send subscription to backend
+                await syncPushSubscriptionWithBackend(subscription);
+
+                localStorage.removeItem('alkarram_push_dismissed');
+                if (banner) banner.style.display = 'none';
+                await updatePushUI();
+
+                if (showSuccessAlert) {
+                    const msg = window.t ? window.t('owner.pushSuccess') : '✅ Notificaciones activadas con éxito. Recibirás avisos de nuevos pedidos incluso con la pantalla apagada.';
+                    alert(msg);
+                }
+            } catch (err) {
+                console.error('Failed to subscribe user to push:', err);
+                alert('Error activando notificaciones push: ' + (err.message || err));
+            } finally {
+                if (enableBtn) enableBtn.disabled = false;
+            }
+        }
+
+        async function syncPushSubscriptionWithBackend(subscription) {
+            if (!authToken || !subscription) return;
+            try {
+                const subJson = subscription.toJSON();
+                const res = await fetch('/api/push-subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ subscription: subJson })
+                });
+                const data = await res.json();
+                console.log('Push subscription sync response:', data);
+            } catch (e) {
+                console.warn('Failed to sync push subscription with backend:', e);
+            }
+        }
+
+        // Hook banner and button event listeners
+        const btnEnablePush = document.getElementById('btnEnablePush');
+        if (btnEnablePush) {
+            btnEnablePush.addEventListener('click', () => subscribeUserToPush(true));
+        }
+
+        const btnDismissPush = document.getElementById('btnDismissPush');
+        if (btnDismissPush) {
+            btnDismissPush.addEventListener('click', () => {
+                localStorage.setItem('alkarram_push_dismissed', 'true');
+                const banner = document.getElementById('pushPermissionBanner');
+                if (banner) banner.style.display = 'none';
+            });
+        }
+
+        const pushToggleBtn = document.getElementById('pushToggleBtn');
+        if (pushToggleBtn) {
+            pushToggleBtn.addEventListener('click', () => {
+                if (Notification.permission === 'granted') {
+                    alert(window.t ? window.t('owner.pushSuccess') : '✅ Notificaciones activas en este dispositivo.');
+                } else if (Notification.permission === 'denied') {
+                    alert(window.t ? window.t('owner.pushBlocked') : 'Notificaciones bloqueadas en el navegador. Por favor habilítalas en la configuración de permisos del sitio.');
+                } else {
+                    subscribeUserToPush(true);
+                }
+            });
         }
     </script>
 </body>

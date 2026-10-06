@@ -3,6 +3,7 @@
 ================================================== */
 const db = require('../lib/db');
 const { verifyToken } = require('./auth');
+const { sendNewOrderNotification } = require('../lib/push');
 
 function parseJsonBody(req) {
     return new Promise((resolve) => {
@@ -169,6 +170,8 @@ module.exports = async function handler(req, res) {
             };
 
             const savedOrder = await db.createOrder(order);
+            // Trigger push notification to registered owner devices
+            sendNewOrderNotification(savedOrder).catch(err => console.warn('Push dispatch error:', err));
             return sendJson(res, 201, { success: true, order: savedOrder });
         } catch (err) {
             console.error('Error creating order:', err);

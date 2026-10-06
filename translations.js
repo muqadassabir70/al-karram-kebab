@@ -7281,7 +7281,15 @@ const SYSTEM_EXTENSIONS = {
       notesLabel: "Notas:",
       connectingError: "Error conectando con el servidor",
       statusUpdated: "Estado del pedido actualizado",
-      langLabel: "Idioma"
+      langLabel: "Idioma",
+      pushTitle: "Activar Notificaciones de Nuevos Pedidos",
+      pushDesc: "Permite las notificaciones para recibir alertas sonoras en tu móvil cada vez que entre un nuevo pedido, incluso con la pantalla apagada o la web cerrada.",
+      enablePushBtn: "Activar Notificaciones",
+      dismissPushBtn: "Ahora no",
+      pushActive: "Notificaciones Activas",
+      pushBlocked: "Notificaciones Bloqueadas",
+      pushUnsupported: "Notificaciones no soportadas en este navegador",
+      pushSuccess: "✅ Notificaciones activadas con éxito. Recibirás avisos de nuevos pedidos incluso con la pantalla apagada."
     }
   },
   en: {
@@ -7383,7 +7391,15 @@ const SYSTEM_EXTENSIONS = {
       notesLabel: "Notes:",
       connectingError: "Error connecting to server",
       statusUpdated: "Order status updated",
-      langLabel: "Language"
+      langLabel: "Language",
+      pushTitle: "Enable New Order Notifications",
+      pushDesc: "Allow notifications so you receive sound alerts on your phone whenever a new order arrives, even when the screen is locked or the website is closed.",
+      enablePushBtn: "Enable Notifications",
+      dismissPushBtn: "Not now",
+      pushActive: "Notifications Active",
+      pushBlocked: "Notifications Blocked",
+      pushUnsupported: "Notifications not supported on this browser",
+      pushSuccess: "✅ Push notifications enabled! You will be alerted when new orders arrive even when the panel is closed."
     }
   }
 };

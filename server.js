@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const ordersHandler = require('./api/orders');
 const authHandler = require('./api/auth');
+const pushSubscribeHandler = require('./api/push-subscribe');
 
 // Simple .env parser for local dev
 const envPath = path.resolve(__dirname, '.env');
@@ -57,6 +58,9 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/api/auth' || pathname.startsWith('/api/auth/')) {
         return authHandler(req, res);
+    }
+    if (pathname === '/api/push-subscribe' || pathname === '/api/push' || pathname.startsWith('/api/push-subscribe/')) {
+        return pushSubscribeHandler(req, res);
     }
 
     // Serve static files
