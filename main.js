@@ -785,6 +785,14 @@ function applyTranslations() {
     if (currentProduct && document.getElementById("productModalOverlay")?.classList.contains("open")) {
         retranslateProductModal();
     }
+
+    const savedNum = localStorage.getItem("alkarram_active_order_number");
+    const textEl = document.getElementById("headerActiveOrderText");
+    if (savedNum && textEl) {
+        const prefix = window.t ? window.t("tracking.orderNumberPrefix", "Pedido #") : "Pedido #";
+        textEl.innerText = `${prefix}${savedNum}`;
+    }
+    showLocationConfirmBanner();
 }
 
 function retranslateProductModal() {
@@ -1819,13 +1827,13 @@ function detectCurrentLocation() {
     const originalText = btn ? btn.innerHTML : "";
 
     if (!navigator.geolocation) {
-        showToast("Tu navegador no soporta geolocalización. Introduce tu dirección manualmente.");
+        showToast(window.t ? window.t("location.gpsUnsupported", "Tu navegador no soporta geolocalización. Introduce tu dirección manualmente.") : "Tu navegador no soporta geolocalización. Introduce tu dirección manualmente.");
         return;
     }
 
     if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación GPS...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + (window.t ? window.t("location.gpsGetting", "Obteniendo ubicación GPS...") : "Obteniendo ubicación GPS...");
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -1841,13 +1849,13 @@ function detectCurrentLocation() {
             if (statusBox) {
                 statusBox.style.display = "block";
                 const badge = document.getElementById("locBadgeStatus");
-                if (badge) badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación detectada por GPS';
+                if (badge) badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (window.t ? window.t("location.detectedGps", "Ubicación detectada por GPS") : "Ubicación detectada por GPS");
             }
 
             initDeliveryMap(lat, lng);
             reverseGeocodeCoords(lat, lng);
             showLocationConfirmBanner();
-            showToast("📍 Ubicación detectada con éxito");
+            showToast(window.t ? window.t("location.detectSuccess", "📍 Ubicación detectada con éxito") : "📍 Ubicación detectada con éxito");
         },
         (err) => {
             if (btn) {
@@ -1857,15 +1865,15 @@ function detectCurrentLocation() {
             if (statusBox) {
                 statusBox.style.display = "block";
                 const badge = document.getElementById("locBadgeStatus");
-                if (badge) badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;"></i> Ubicación no detectada';
+                if (badge) badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;"></i> ' + (window.t ? window.t("location.notDetected", "Ubicación no detectada") : "Ubicación no detectada");
                 const addrSpan = document.getElementById("detectedAddressSpan");
-                if (addrSpan) addrSpan.innerText = "No se pudo detectar tu ubicación automáticamente. Por favor, introduce la dirección manualmente.";
+                if (addrSpan) addrSpan.innerText = window.t ? window.t("location.detectFail", "No se pudo detectar tu ubicación automáticamente. Por favor, introduce la dirección manualmente.") : "No se pudo detectar tu ubicación automáticamente. Por favor, introduce la dirección manualmente.";
             }
             const changePanel = document.getElementById("changeLocPanel");
             if (changePanel) changePanel.style.display = "block";
             const addrInput = document.getElementById("custAddress");
             if (addrInput) addrInput.focus();
-            showToast("No se pudo detectar la ubicación. Introduce tu dirección manualmente.");
+            showToast(window.t ? window.t("location.detectFail", "No se pudo detectar la ubicación. Introduce tu dirección manualmente.") : "No se pudo detectar la ubicación. Introduce tu dirección manualmente.");
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
@@ -1936,12 +1944,12 @@ async function searchAddressMontilla() {
 
             initDeliveryMap(lat, lng);
             showLocationConfirmBanner();
-            showToast("Ubicación encontrada en el mapa");
+            showToast(window.t ? window.t("location.foundOnMap", "Ubicación encontrada en el mapa") : "Ubicación encontrada en el mapa");
         } else {
-            showToast("No se encontró esa dirección en Montilla. Prueba con otra calle.");
+            showToast(window.t ? window.t("location.notFound", "No se encontró esa dirección en Montilla. Prueba con otra calle.") : "No se encontró esa dirección en Montilla. Prueba con otra calle.");
         }
     } catch (e) {
-        showToast("Error al buscar dirección. Introduce los datos manualmente.");
+        showToast(window.t ? window.t("location.searchError", "Error al buscar dirección. Introduce los datos manualmente.") : "Error al buscar dirección. Introduce los datos manualmente.");
     } finally {
         if (btn) {
             btn.disabled = false;
@@ -1956,10 +1964,10 @@ function showLocationConfirmBanner() {
         banner.style.display = "flex";
         const btn = document.getElementById("btnConfirmLocation");
         if (btn && isLocationConfirmed) {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación Confirmada';
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (window.t ? window.t("location.confirmedBadge", "Ubicación Confirmada") : "Ubicación Confirmada");
             btn.style.background = "#059669";
         } else if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar ubicación';
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (window.t ? window.t("location.confirmBtn", "Confirmar ubicación") : "Confirmar ubicación");
             btn.style.background = "";
         }
     }
@@ -1967,16 +1975,16 @@ function showLocationConfirmBanner() {
 
 function confirmDeliveryLocation() {
     if (!selectedCoords) {
-        showToast("Selecciona primero una ubicación en el mapa.");
+        showToast(window.t ? window.t("location.selectFirst", "Selecciona primero una ubicación en el mapa.") : "Selecciona primero una ubicación en el mapa.");
         return;
     }
     isLocationConfirmed = true;
     const btn = document.getElementById("btnConfirmLocation");
     if (btn) {
-        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Ubicación Confirmada';
+        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (window.t ? window.t("location.confirmedBadge", "Ubicación Confirmada") : "Ubicación Confirmada");
         btn.style.background = "#059669";
     }
-    showToast("✅ Ubicación confirmada para la entrega");
+    showToast(window.t ? window.t("location.confirmedToast", "✅ Ubicación confirmada para la entrega") : "✅ Ubicación confirmada para la entrega");
 }
 
 /* ==========================================
@@ -2022,10 +2030,10 @@ function updateTrackingStepper(status, orderType = "") {
     const transitIcon = document.getElementById("transitStepIcon");
     if (transitLabel && transitIcon) {
         if (isPickup) {
-            transitLabel.innerText = "Listo para recoger";
+            transitLabel.innerText = window.t ? window.t("tracking.stepPickupReady", "Listo para recoger") : "Listo para recoger";
             transitIcon.className = "fa-solid fa-store";
         } else {
-            transitLabel.innerText = "En Reparto";
+            transitLabel.innerText = window.t ? window.t("tracking.stepTransit", "En Reparto") : "En Reparto";
             transitIcon.className = "fa-solid fa-motorcycle";
         }
     }
@@ -2048,18 +2056,18 @@ function updateTrackingStepper(status, orderType = "") {
     switch (status) {
         case "submitted":
             if (steps.submitted) steps.submitted.classList.add("active");
-            if (hint) hint.innerHTML = '<i class="fa-solid fa-clock"></i> Pedido enviado. Esperando confirmación del restaurante...';
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-clock"></i> ' + (window.t ? window.t("tracking.hintSubmitted", "Pedido enviado. Esperando confirmación del restaurante...") : "Pedido enviado. Esperando confirmación del restaurante...");
             break;
         case "accepted":
             if (steps.submitted) steps.submitted.classList.add("completed");
             if (steps.accepted) steps.accepted.classList.add("active");
-            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ¡Pedido aceptado! El restaurante ya lo ha confirmado.';
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ' + (window.t ? window.t("tracking.hintAccepted", "¡Pedido aceptado! El restaurante ya lo ha confirmado.") : "¡Pedido aceptado! El restaurante ya lo ha confirmado.");
             break;
         case "preparing":
             if (steps.submitted) steps.submitted.classList.add("completed");
             if (steps.accepted) steps.accepted.classList.add("completed");
             if (steps.preparing) steps.preparing.classList.add("active");
-            if (hint) hint.innerHTML = '<i class="fa-solid fa-fire" style="color:#D62828;"></i> ¡En la cocina! Preparando tu comida fresca y crujiente.';
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-fire" style="color:#D62828;"></i> ' + (window.t ? window.t("tracking.hintPreparing", "¡En la cocina! Preparando tu comida fresca y crujiente.") : "¡En la cocina! Preparando tu comida fresca y crujiente.");
             break;
         case "out_for_delivery":
         case "ready_for_pickup":
@@ -2070,17 +2078,17 @@ function updateTrackingStepper(status, orderType = "") {
             if (steps.transit) steps.transit.classList.add("active");
             if (hint) {
                 hint.innerHTML = isPickup
-                    ? '<i class="fa-solid fa-store" style="color:#2563EB;"></i> ¡Tu pedido está listo! Puedes pasar a recogerlo por Calle Corredera 46.'
-                    : '<i class="fa-solid fa-motorcycle" style="color:#D97706;"></i> ¡El repartidor va de camino con tu pedido!';
+                    ? ('<i class="fa-solid fa-store" style="color:#2563EB;"></i> ' + (window.t ? window.t("tracking.hintPickupReady", "¡Tu pedido está listo! Puedes pasar a recogerlo por Calle Corredera 46.") : "¡Tu pedido está listo! Puedes pasar a recogerlo por Calle Corredera 46."))
+                    : ('<i class="fa-solid fa-motorcycle" style="color:#D97706;"></i> ' + (window.t ? window.t("tracking.hintTransit", "¡El repartidor va de camino con tu pedido!") : "¡El repartidor va de camino con tu pedido!"));
             }
             break;
         case "completed":
             Object.values(steps).forEach(el => { if (el) el.classList.add("completed"); });
             if (steps.completed) steps.completed.classList.add("active");
-            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ¡Pedido entregado! ¡Buen provecho y gracias por elegir Al Karram Kebab!';
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ' + (window.t ? window.t("tracking.hintCompleted", "¡Pedido entregado! ¡Buen provecho y gracias por elegir Al Karram Kebab!") : "¡Pedido entregado! ¡Buen provecho y gracias por elegir Al Karram Kebab!");
             break;
         case "rejected":
-            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#DC2626;"></i> El restaurante no ha podido aceptar el pedido en este momento.';
+            if (hint) hint.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#DC2626;"></i> ' + (window.t ? window.t("tracking.hintRejected", "El restaurante no ha podido aceptar el pedido en este momento.") : "El restaurante no ha podido aceptar el pedido en este momento.");
             break;
         default:
             if (steps.submitted) steps.submitted.classList.add("active");
@@ -2096,7 +2104,10 @@ function restoreActiveOrderTracking() {
 
     if (savedId && pill) {
         pill.style.display = "inline-flex";
-        if (textEl && savedNum) textEl.innerText = `Pedido #${savedNum}`;
+        if (textEl && savedNum) {
+            const prefix = window.t ? window.t("tracking.orderNumberPrefix", "Pedido #") : "Pedido #";
+            textEl.innerText = `${prefix}${savedNum}`;
+        }
         pill.onclick = async () => {
             try {
                 const res = await fetch(`/api/orders?id=${savedId}`);
@@ -2456,7 +2467,12 @@ function showConfirmationModal(order) {
     if (numEl) numEl.innerText = `#${orderNum}`;
     if (nameEl) nameEl.innerText = `${order.customerName || ''} ${order.customerSurname || ''}`.trim();
     if (phoneEl) phoneEl.innerText = order.phone || '';
-    if (typeEl) typeEl.innerText = order.orderType || '';
+    if (typeEl) {
+        const isPick = (order.orderType === 'pickup' || String(order.orderType || '').toLowerCase().includes('recog'));
+        typeEl.innerText = isPick
+            ? (window.t ? window.t("cart.pickupOption", "Recoger en Local") : "Recoger en Local")
+            : (window.t ? window.t("cart.deliveryOption", "A Domicilio") : "A Domicilio");
+    }
 
     if (addrRow && addrEl) {
         if (order.address && order.address !== "Recogida en local" && order.address !== "recogida") {
@@ -2467,7 +2483,12 @@ function showConfirmationModal(order) {
         }
     }
 
-    if (payEl) payEl.innerText = order.paymentMethod || '';
+    if (payEl) {
+        const isCard = (order.paymentMethod === 'card');
+        payEl.innerText = isCard
+            ? (window.t ? window.t("checkout.cardTitle", "Pago con Tarjeta") : "Tarjeta")
+            : (window.t ? window.t("checkout.cashTitle", "Pago en Efectivo") : "Efectivo");
+    }
     const totalAmount = typeof order.total === "number" ? order.total : parseFloat(order.total || 0);
     if (totalEl) totalEl.innerText = formatEuro(totalAmount);
 
@@ -2485,9 +2506,10 @@ function showConfirmationModal(order) {
 
         const delCost = typeof order.deliveryCost === "number" ? order.deliveryCost : parseFloat(order.deliveryCost || 0);
         if (delCost > 0) {
+            const deliveryLabelText = window.t ? window.t("cart.deliveryLine", "Delivery:") : "Delivery:";
             itemsHtml += `
                 <div class="receipt-item-line">
-                    <span>Delivery</span>
+                    <span>${deliveryLabelText.replace(':', '')}</span>
                     <strong>${formatEuro(delCost)}</strong>
                 </div>
             `;

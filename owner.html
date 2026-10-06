@@ -50,12 +50,19 @@
         }
         .login-card {
             background: var(--surface);
-            padding: 40px;
+            padding: 36px 32px;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             text-align: center;
+            position: relative;
+        }
+        .login-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
         .login-card .logo-icon {
             width: 68px;
@@ -66,19 +73,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 16px;
+            font-size: 30px;
+            margin: 0 auto 14px;
         }
         .login-card h2 { font-family: 'Poppins', sans-serif; font-size: 22px; margin-bottom: 6px; }
-        .login-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
-        .login-form .form-group { text-align: left; margin-bottom: 20px; }
+        .login-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
+        .login-form .form-group { text-align: left; margin-bottom: 18px; }
         .login-form label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; color: var(--text-muted); }
         .login-form input {
             width: 100%;
             padding: 13px 16px;
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             transition: all 0.2s;
         }
@@ -94,16 +101,17 @@
             font-weight: 700;
             cursor: pointer;
             transition: background 0.2s;
+            margin-top: 6px;
         }
         .btn-login:hover { background: var(--primary-hover); }
-        .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+        .login-error { color: var(--danger); font-size: 13px; margin-top: 14px; display: none; font-weight: 600; }
 
         /* Dashboard Screen */
         #dashboardScreen { display: none; }
         .dash-header {
             background: #191D24;
             color: #fff;
-            padding: 16px 24px;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -111,11 +119,26 @@
             top: 0;
             z-index: 100;
             box-shadow: var(--shadow-md);
+            flex-wrap: wrap;
+            gap: 12px;
         }
         .dash-brand { display: flex; align-items: center; gap: 12px; }
         .dash-brand-logo { font-size: 22px; color: var(--primary); }
-        .dash-brand h1 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; }
-        .dash-header-actions { display: flex; align-items: center; gap: 12px; }
+        .dash-brand h1 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; line-height: 1.2; }
+        .dash-brand span { font-size: 11px; color: #94A3B8; }
+        .dash-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .owner-lang-select {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+        .owner-lang-select option { background: #191D24; color: #fff; }
         .audio-toggle, .btn-logout, .btn-refresh {
             background: rgba(255,255,255,0.1);
             color: #fff;
@@ -128,6 +151,7 @@
             align-items: center;
             gap: 6px;
             transition: background 0.2s;
+            font-weight: 500;
         }
         .audio-toggle:hover, .btn-logout:hover, .btn-refresh:hover { background: rgba(255,255,255,0.2); }
         .audio-toggle.active { background: #10B981; border-color: #10B981; }
@@ -149,7 +173,7 @@
             50% { background: #BA1818; }
         }
 
-        .dash-container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+        .dash-container { max-width: 1400px; margin: 0 auto; padding: 24px 20px; }
 
         /* Stats Grid */
         .stats-grid {
@@ -180,8 +204,8 @@
             font-size: 20px;
         }
         .stat-icon.red { background: var(--primary-light); color: var(--primary); }
-        .stat-icon.amber { background: #FEF3C7; color: #D97706; }
         .stat-icon.blue { background: #DBEAFE; color: #2563EB; }
+        .stat-icon.amber { background: #FEF3C7; color: #D97706; }
         .stat-icon.green { background: #D1FAE5; color: #059669; }
 
         /* Filters Bar */
@@ -271,7 +295,7 @@
 
         .order-body { padding: 18px; flex: 1; }
         .order-cust-info { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
-        .cust-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+        .cust-name { font-weight: 700; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
         .cust-contact-actions { display: flex; gap: 8px; }
         .cust-contact-btn {
             display: inline-flex;
@@ -279,13 +303,17 @@
             gap: 4px;
             font-size: 12px;
             font-weight: 600;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
             text-decoration: none;
             color: #fff;
         }
         .btn-call { background: #2563EB; }
+        .btn-call:hover { background: #1D4ED8; }
         .btn-wa { background: #16A34A; }
+        .btn-wa:hover { background: #15803D; }
+
+        .order-meta-info { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
         .order-address-box {
             background: #F8FAFC;
@@ -294,8 +322,9 @@
             font-size: 13px;
             margin-bottom: 12px;
             border: 1px solid var(--border);
+            line-height: 1.5;
         }
-        .order-address-box a { color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
+        .order-address-box a { color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 12px; }
         .order-address-box a:hover { text-decoration: underline; }
 
         .order-items-list { margin-bottom: 14px; }
@@ -317,6 +346,7 @@
             border-radius: 8px;
             font-size: 13px;
             margin-bottom: 16px;
+            border: 1px solid var(--border);
         }
         .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
         .total-final {
@@ -338,8 +368,8 @@
         }
         .btn-action {
             flex: 1;
-            min-width: 100px;
-            padding: 10px;
+            min-width: 110px;
+            padding: 10px 14px;
             border: none;
             border-radius: 8px;
             font-size: 13px;
@@ -367,6 +397,13 @@
             color: var(--text-muted);
         }
         .empty-orders i { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+
+        @media (max-width: 640px) {
+            .dash-header { padding: 12px 16px; }
+            .dash-container { padding: 16px 12px; }
+            .orders-grid { grid-template-columns: 1fr; }
+            .login-card { padding: 28px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -374,16 +411,32 @@
     <!-- Login Screen -->
     <div id="loginScreen">
         <div class="login-card">
+            <div class="login-top-row">
+                <span style="font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase;"><i class="fa-solid fa-shield-halved"></i> Owner Portal</span>
+                <select id="loginLangSelect" class="owner-lang-select" style="background: #F1F5F9; color: #191D24; border: 1px solid #CBD5E1;" aria-label="Idioma">
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                    <option value="ur">🇵🇰 اردو</option>
+                </select>
+            </div>
             <div class="logo-icon"><i class="fa-solid fa-store"></i></div>
-            <h2>Al Karram Kebab</h2>
-            <p>Panel de Control y Pedidos para Propietario</p>
+            <h2 data-i18n="owner.brand">Al Karram Kebab</h2>
+            <p data-i18n="owner.subtitle">Panel de Control y Pedidos para Propietario</p>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="ownerPassword">Contraseña de Acceso</label>
-                    <input type="password" id="ownerPassword" placeholder="Introduce la contraseña" required autocomplete="current-password">
+                    <label for="ownerEmail" data-i18n="owner.emailLabel">Correo Electrónico</label>
+                    <input type="email" id="ownerEmail" value="owner@alkarramkebab.com" required autocomplete="username">
                 </div>
-                <button type="submit" class="btn-login" id="loginBtn">Entrar al Panel</button>
-                <div class="login-error" id="loginError">Contraseña incorrecta. Inténtalo de nuevo.</div>
+                <div class="form-group">
+                    <label for="ownerPassword" data-i18n="owner.passwordLabel">Contraseña de Acceso</label>
+                    <input type="password" id="ownerPassword" placeholder="Introduce la contraseña" data-i18n="owner.passwordPlaceholder" data-i18n-attr="placeholder" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn" data-i18n="owner.loginBtn">Entrar al Panel</button>
+                <div class="login-error" id="loginError" data-i18n="owner.loginError">Credenciales incorrectas. Inténtalo de nuevo.</div>
             </form>
         </div>
     </div>
@@ -394,27 +447,36 @@
             <div class="dash-brand">
                 <i class="fa-solid fa-utensils dash-brand-logo"></i>
                 <div>
-                    <h1>Al Karram Kebab</h1>
-                    <span style="font-size: 11px; color: #94A3B8;">Panel de Pedidos en Tiempo Real</span>
+                    <h1 data-i18n="owner.brand">Al Karram Kebab</h1>
+                    <span data-i18n="owner.title">Panel de Pedidos en Tiempo Real</span>
                 </div>
             </div>
             <div class="dash-header-actions">
+                <select id="dashLangSelect" class="owner-lang-select" aria-label="Idioma">
+                    <option value="es">🇪🇸 ES</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="de">🇩🇪 DE</option>
+                    <option value="it">🇮🇹 IT</option>
+                    <option value="ar">🇸🇦 AR</option>
+                    <option value="ur">🇵🇰 UR</option>
+                </select>
                 <button class="audio-toggle active" id="audioToggleBtn" title="Activar/Desactivar sonido">
-                    <i class="fa-solid fa-volume-high"></i> Sonido Activado
+                    <i class="fa-solid fa-volume-high"></i> <span id="soundBtnText" data-i18n="owner.soundOn">Sonido Activado</span>
                 </button>
                 <button class="btn-refresh" id="refreshBtn" title="Actualizar pedidos">
-                    <i class="fa-solid fa-arrows-rotate"></i> Actualizar
+                    <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="owner.refresh">Actualizar</span>
                 </button>
                 <button class="btn-logout" id="logoutBtn" title="Cerrar sesión">
-                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                    <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="owner.logout">Cerrar sesión</span>
                 </button>
             </div>
         </header>
 
         <!-- New Order Alert Banner -->
         <div class="new-order-banner" id="newOrderBanner">
-            <span><i class="fa-solid fa-bell"></i> ¡NUEVO PEDIDO RECIBIDO! Revisa la lista de pedidos.</span>
-            <button style="background: none; border: none; color: #fff; cursor: pointer;" onclick="document.getElementById('newOrderBanner').style.display='none'">✕</button>
+            <span><i class="fa-solid fa-bell"></i> <span data-i18n="owner.newOrderAlert">¡NUEVO PEDIDO RECIBIDO! Revisa la lista de pedidos.</span></span>
+            <button style="background: none; border: none; color: #fff; cursor: pointer; font-size: 16px; padding: 4px;" onclick="document.getElementById('newOrderBanner').style.display='none'">✕</button>
         </div>
 
         <main class="dash-container">
@@ -422,28 +484,28 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-info">
-                        <span>Nuevos Pedidos</span>
+                        <span data-i18n="owner.statNew">Nuevos Pedidos</span>
                         <strong id="statNew">0</strong>
                     </div>
                     <div class="stat-icon red"><i class="fa-solid fa-bell"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <span>En Preparación</span>
+                        <span data-i18n="owner.statPrep">En Preparación</span>
                         <strong id="statPrep">0</strong>
                     </div>
                     <div class="stat-icon blue"><i class="fa-solid fa-fire"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <span>En Reparto / Listos</span>
+                        <span data-i18n="owner.statTransit">En Reparto / Listos</span>
                         <strong id="statTransit">0</strong>
                     </div>
                     <div class="stat-icon amber"><i class="fa-solid fa-motorcycle"></i></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <span>Completados Hoy</span>
+                        <span data-i18n="owner.statDone">Completados Hoy</span>
                         <strong id="statDone">0</strong>
                     </div>
                     <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
@@ -452,21 +514,24 @@
 
             <!-- Filters -->
             <div class="filters-bar">
-                <button class="filter-btn active" data-filter="all">Todos (<span id="countAll">0</span>)</button>
-                <button class="filter-btn" data-filter="new">Nuevos (<span id="countNew">0</span>)</button>
-                <button class="filter-btn" data-filter="active">Activos (<span id="countActive">0</span>)</button>
-                <button class="filter-btn" data-filter="completed">Completados (<span id="countCompleted">0</span>)</button>
+                <button class="filter-btn active" data-filter="all"><span data-i18n="owner.filterAll">Todos</span> (<span id="countAll">0</span>)</button>
+                <button class="filter-btn" data-filter="new"><span data-i18n="owner.filterNew">Nuevos</span> (<span id="countNew">0</span>)</button>
+                <button class="filter-btn" data-filter="active"><span data-i18n="owner.filterActive">Activos</span> (<span id="countActive">0</span>)</button>
+                <button class="filter-btn" data-filter="completed"><span data-i18n="owner.filterCompleted">Completados</span> (<span id="countCompleted">0</span>)</button>
             </div>
 
             <!-- Orders Grid -->
             <div class="orders-grid" id="ordersGrid">
                 <div class="empty-orders">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Cargando pedidos...</p>
+                    <p data-i18n="owner.loadingOrders">Cargando pedidos...</p>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Translations dictionary -->
+    <script src="translations.js"></script>
 
     <script>
         let authToken = localStorage.getItem('alkarram_owner_token') || '';
@@ -476,13 +541,53 @@
         let soundEnabled = true;
         let pollInterval = null;
 
-        // Audio notification synthesizer using Web Audio API (100% reliable, no external files)
+        // Synchronize language state
+        const savedLang = localStorage.getItem('alkarram_language') || 'es';
+        window.currentLang = savedLang;
+
+        function setLanguage(lang) {
+            window.currentLang = lang;
+            localStorage.setItem('alkarram_language', lang);
+            const loginSel = document.getElementById('loginLangSelect');
+            const dashSel = document.getElementById('dashLangSelect');
+            if (loginSel) loginSel.value = lang;
+            if (dashSel) dashSel.value = lang;
+            applyOwnerTranslations();
+            renderOrders();
+        }
+
+        function applyOwnerTranslations() {
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                const val = window.t ? window.t(key) : null;
+                if (val) {
+                    const attr = el.getAttribute("data-i18n-attr");
+                    if (attr) {
+                        el.setAttribute(attr, val);
+                    } else if (val.includes("<") && val.includes(">")) {
+                        el.innerHTML = val;
+                    } else {
+                        el.textContent = val;
+                    }
+                }
+            });
+
+            // Update sound button text
+            const soundText = document.getElementById('soundBtnText');
+            if (soundText) {
+                soundText.innerText = soundEnabled
+                    ? (window.t ? window.t('owner.soundOn', 'Sonido Activado') : 'Sonido Activado')
+                    : (window.t ? window.t('owner.soundOff', 'Sonido Silenciado') : 'Sonido Silenciado');
+            }
+        }
+
+        // Web Audio notification chime
         function playChime() {
             if (!soundEnabled) return;
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
-                // Beep 1
+                // Tone 1
                 const osc1 = ctx.createOscillator();
                 const gain1 = ctx.createGain();
                 osc1.type = 'sine';
@@ -494,7 +599,7 @@
                 osc1.start(now);
                 osc1.stop(now + 0.3);
 
-                // Beep 2
+                // Tone 2
                 const osc2 = ctx.createOscillator();
                 const gain2 = ctx.createGain();
                 osc2.type = 'sine';
@@ -520,20 +625,44 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const newOrderBanner = document.getElementById('newOrderBanner');
+        const loginLangSelect = document.getElementById('loginLangSelect');
+        const dashLangSelect = document.getElementById('dashLangSelect');
 
-        // Check stored auth
+        if (loginLangSelect) {
+            loginLangSelect.value = savedLang;
+            loginLangSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+        }
+        if (dashLangSelect) {
+            dashLangSelect.value = savedLang;
+            dashLangSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+        }
+
+        // Apply translations initially
+        applyOwnerTranslations();
+
+        // Check stored auth on load
         if (authToken) {
             checkAuthAndStart();
+        } else {
+            loginScreen.style.display = 'flex';
+            dashboardScreen.style.display = 'none';
         }
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const password = document.getElementById('ownerPassword').value;
+            const email = document.getElementById('ownerEmail').value.trim();
+            const password = document.getElementById('ownerPassword').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
             try {
                 const res = await fetch('/api/auth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify({ email, password })
                 });
                 const data = await res.json();
                 if (data.success && data.token) {
@@ -543,11 +672,14 @@
                     startDashboard();
                 } else {
                     loginError.style.display = 'block';
-                    loginError.innerText = data.message || 'Contraseña incorrecta';
+                    loginError.innerText = (window.t ? window.t('owner.loginError') : null) || data.message || 'Credenciales incorrectas';
                 }
             } catch (err) {
                 loginError.style.display = 'block';
-                loginError.innerText = 'Error conectando con el servidor';
+                loginError.innerText = (window.t ? window.t('owner.connectingError') : null) || 'Error conectando con el servidor';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
 
@@ -562,19 +694,24 @@
                 } else {
                     localStorage.removeItem('alkarram_owner_token');
                     authToken = '';
+                    loginScreen.style.display = 'flex';
+                    dashboardScreen.style.display = 'none';
                 }
             } catch (e) {
-                // If offline, still allow local session check
-                startDashboard();
+                localStorage.removeItem('alkarram_owner_token');
+                authToken = '';
+                loginScreen.style.display = 'flex';
+                dashboardScreen.style.display = 'none';
             }
         }
 
         function startDashboard() {
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'block';
+            applyOwnerTranslations();
             fetchOrders();
             if (pollInterval) clearInterval(pollInterval);
-            pollInterval = setInterval(fetchOrders, 4000); // 4 second polling for live orders
+            pollInterval = setInterval(fetchOrders, 4000); // 4 second live polling
         }
 
         logoutBtn.addEventListener('click', () => {
@@ -583,6 +720,7 @@
             if (pollInterval) clearInterval(pollInterval);
             dashboardScreen.style.display = 'none';
             loginScreen.style.display = 'flex';
+            document.getElementById('ownerPassword').value = '';
         });
 
         refreshBtn.addEventListener('click', () => {
@@ -592,9 +730,12 @@
         audioToggleBtn.addEventListener('click', () => {
             soundEnabled = !soundEnabled;
             audioToggleBtn.classList.toggle('active', soundEnabled);
-            audioToggleBtn.innerHTML = soundEnabled 
-                ? '<i class="fa-solid fa-volume-high"></i> Sonido Activado' 
-                : '<i class="fa-solid fa-volume-xmark"></i> Sonido Silenciado';
+            const soundText = document.getElementById('soundBtnText');
+            if (soundText) {
+                soundText.innerText = soundEnabled
+                    ? (window.t ? window.t('owner.soundOn', 'Sonido Activado') : 'Sonido Activado')
+                    : (window.t ? window.t('owner.soundOff', 'Sonido Silenciado') : 'Sonido Silenciado');
+            }
             if (soundEnabled) playChime();
         });
 
@@ -620,13 +761,14 @@
                 }
                 const data = await res.json();
                 if (data.success && Array.isArray(data.orders)) {
-                    // Check for newly arrived orders
                     let hasNewArrival = false;
                     data.orders.forEach(o => {
-                        if (!knownOrderIds.has(o.orderId) && o.orderStatus === 'new') {
+                        const oid = o.orderId || o.id;
+                        const ost = o.orderStatus || o.status;
+                        if (!knownOrderIds.has(oid) && (ost === 'new' || ost === 'submitted')) {
                             hasNewArrival = true;
                         }
-                        knownOrderIds.add(o.orderId);
+                        knownOrderIds.add(oid);
                     });
 
                     if (hasNewArrival) {
@@ -644,11 +786,11 @@
         }
 
         function updateStats() {
-            const countNew = allOrders.filter(o => o.orderStatus === 'new').length;
-            const countPrep = allOrders.filter(o => o.orderStatus === 'accepted' || o.orderStatus === 'preparing').length;
-            const countTransit = allOrders.filter(o => o.orderStatus === 'ready' || o.orderStatus === 'out_for_delivery' || o.orderStatus === 'ready_for_pickup').length;
-            const countDone = allOrders.filter(o => o.orderStatus === 'completed').length;
-            const countActive = allOrders.filter(o => !['completed', 'rejected'].includes(o.orderStatus)).length;
+            const countNew = allOrders.filter(o => (o.orderStatus === 'new' || o.status === 'submitted')).length;
+            const countPrep = allOrders.filter(o => ['accepted', 'preparing'].includes(o.orderStatus || o.status)).length;
+            const countTransit = allOrders.filter(o => ['ready', 'out_for_delivery', 'ready_for_pickup'].includes(o.orderStatus || o.status)).length;
+            const countDone = allOrders.filter(o => (o.orderStatus === 'completed' || o.status === 'completed')).length;
+            const countActive = allOrders.filter(o => !['completed', 'rejected'].includes(o.orderStatus || o.status)).length;
 
             document.getElementById('statNew').innerText = countNew;
             document.getElementById('statPrep').innerText = countPrep;
@@ -674,40 +816,57 @@
             }
         }
 
-        const STATUS_LABELS = {
-            'new': { label: 'Nuevo', class: 'badge-new' },
-            'accepted': { label: 'Aceptado', class: 'badge-accepted' },
-            'preparing': { label: 'En Preparación', class: 'badge-preparing' },
-            'ready': { label: 'Listo', class: 'badge-ready' },
-            'out_for_delivery': { label: 'En Reparto', class: 'badge-out_for_delivery' },
-            'ready_for_pickup': { label: 'Listo para Recogida', class: 'badge-ready_for_pickup' },
-            'completed': { label: 'Completado', class: 'badge-completed' },
-            'rejected': { label: 'Rechazado', class: 'badge-rejected' }
-        };
+        function getStatusInfo(rawStatus) {
+            const st = rawStatus === 'submitted' ? 'new' : rawStatus;
+            switch(st) {
+                case 'new':
+                    return { label: window.t ? window.t('owner.statusNew', 'Nuevo') : 'Nuevo', class: 'badge-new' };
+                case 'accepted':
+                    return { label: window.t ? window.t('owner.statusAccepted', 'Confirmado') : 'Confirmado', class: 'badge-accepted' };
+                case 'preparing':
+                    return { label: window.t ? window.t('owner.statusPreparing', 'En Preparación') : 'En Preparación', class: 'badge-preparing' };
+                case 'ready':
+                    return { label: window.t ? window.t('owner.statusReady', 'Listo') : 'Listo', class: 'badge-ready' };
+                case 'out_for_delivery':
+                    return { label: window.t ? window.t('owner.statusOutForDelivery', 'En Reparto') : 'En Reparto', class: 'badge-out_for_delivery' };
+                case 'ready_for_pickup':
+                    return { label: window.t ? window.t('owner.statusReadyForPickup', 'Listo para Recogida') : 'Listo para Recogida', class: 'badge-ready_for_pickup' };
+                case 'completed':
+                    return { label: window.t ? window.t('owner.statusCompleted', 'Entregado') : 'Entregado', class: 'badge-completed' };
+                case 'rejected':
+                    return { label: window.t ? window.t('owner.statusRejected', 'Cancelado') : 'Cancelado', class: 'badge-rejected' };
+                default:
+                    return { label: st, class: 'badge-new' };
+            }
+        }
 
         function renderOrders() {
             let filtered = allOrders;
             if (currentFilter === 'new') {
-                filtered = allOrders.filter(o => o.orderStatus === 'new');
+                filtered = allOrders.filter(o => (o.orderStatus === 'new' || o.status === 'submitted'));
             } else if (currentFilter === 'active') {
-                filtered = allOrders.filter(o => !['completed', 'rejected'].includes(o.orderStatus));
+                filtered = allOrders.filter(o => !['completed', 'rejected'].includes(o.orderStatus || o.status));
             } else if (currentFilter === 'completed') {
-                filtered = allOrders.filter(o => o.orderStatus === 'completed');
+                filtered = allOrders.filter(o => (o.orderStatus === 'completed' || o.status === 'completed'));
             }
 
             if (filtered.length === 0) {
+                const emptyTitle = window.t ? window.t('owner.emptyTitle', 'No hay pedidos') : 'No hay pedidos';
+                const emptySub = window.t ? window.t('owner.emptySubtitle', 'Los nuevos pedidos aparecerán aquí automáticamente.') : 'Los nuevos pedidos aparecerán aquí automáticamente.';
                 ordersGrid.innerHTML = `
                     <div class="empty-orders">
                         <i class="fa-solid fa-clipboard-check"></i>
-                        <h3>No hay pedidos ${currentFilter !== 'all' ? 'en esta sección' : ''}</h3>
-                        <p>Los nuevos pedidos aparecerán aquí automáticamente.</p>
+                        <h3>${emptyTitle}</h3>
+                        <p>${emptySub}</p>
                     </div>
                 `;
                 return;
             }
 
             ordersGrid.innerHTML = filtered.map(order => {
-                const st = STATUS_LABELS[order.orderStatus] || { label: order.orderStatus, class: 'badge-new' };
+                const rawSt = order.orderStatus || order.status || 'new';
+                const effectiveSt = rawSt === 'submitted' ? 'new' : rawSt;
+                const st = getStatusInfo(effectiveSt);
                 const isDelivery = order.orderType === 'delivery';
 
                 // Items list
@@ -728,62 +887,94 @@
 
                 // Map link
                 let mapLinkHtml = '';
+                const viewGpsText = window.t ? window.t('owner.viewGpsMap', 'Ver ubicación exacta en Google Maps') : 'Ver ubicación exacta en Google Maps';
+                const viewAddrText = window.t ? window.t('owner.viewAddrMap', 'Ver dirección en Google Maps') : 'Ver dirección en Google Maps';
+
                 if (isDelivery) {
                     if (order.latitude && order.longitude) {
-                        mapLinkHtml = `<a href="https://maps.google.com/?q=${order.latitude},${order.longitude}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver ubicación exacta en Google Maps</a>`;
-                    } else if (order.deliveryAddress) {
-                        mapLinkHtml = `<a href="https://maps.google.com/?q=${encodeURIComponent(order.deliveryAddress + ', Montilla, Spain')}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver dirección en Google Maps</a>`;
+                        mapLinkHtml = `<a href="https://maps.google.com/?q=${order.latitude},${order.longitude}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> ${viewGpsText}</a>`;
+                    } else if (order.deliveryAddress || order.address) {
+                        const addr = order.deliveryAddress || order.address;
+                        mapLinkHtml = `<a href="https://maps.google.com/?q=${encodeURIComponent(addr + ', Montilla, Spain')}" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> ${viewAddrText}</a>`;
                     }
                 }
 
                 // Phone links
-                const cleanPhone = (order.customerPhone || '').replace(/\s+/g, '');
+                const cleanPhone = (order.customerPhone || order.phone || '').replace(/\s+/g, '');
+                const btnCallText = window.t ? window.t('owner.btnCall', 'Llamar') : 'Llamar';
+                const btnChatText = window.t ? window.t('owner.btnChat', 'Chat') : 'Chat';
 
                 // Action buttons based on current status
                 let actionsHtml = '';
-                if (order.orderStatus === 'new') {
+                const oid = order.orderId || order.id;
+
+                if (effectiveSt === 'new') {
                     actionsHtml = `
-                        <button class="btn-action btn-accept" onclick="updateStatus('${order.orderId}', 'accepted')">
-                            <i class="fa-solid fa-check"></i> ACEPTAR
+                        <button class="btn-action btn-accept" onclick="updateStatus('${oid}', 'accepted')">
+                            <i class="fa-solid fa-check"></i> ${window.t ? window.t('owner.btnAccept', 'CONFIRMAR') : 'CONFIRMAR'}
                         </button>
-                        <button class="btn-action btn-reject" onclick="updateStatus('${order.orderId}', 'rejected')">
-                            <i class="fa-solid fa-xmark"></i> Rechazar
+                        <button class="btn-action btn-reject" onclick="updateStatus('${oid}', 'rejected')">
+                            <i class="fa-solid fa-xmark"></i> ${window.t ? window.t('owner.btnReject', 'Cancelar') : 'Cancelar'}
                         </button>
                     `;
-                } else if (order.orderStatus === 'accepted') {
+                } else if (effectiveSt === 'accepted') {
                     actionsHtml = `
-                        <button class="btn-action btn-status-next" onclick="updateStatus('${order.orderId}', 'preparing')">
-                            <i class="fa-solid fa-fire"></i> Empezar Preparación
+                        <button class="btn-action btn-status-next" onclick="updateStatus('${oid}', 'preparing')">
+                            <i class="fa-solid fa-fire"></i> ${window.t ? window.t('owner.btnStartPrep', 'Empezar Preparación') : 'Empezar Preparación'}
                         </button>
                     `;
-                } else if (order.orderStatus === 'preparing') {
+                } else if (effectiveSt === 'preparing') {
                     const nextSt = isDelivery ? 'ready' : 'ready_for_pickup';
+                    const btnLabel = isDelivery
+                        ? (window.t ? window.t('owner.btnReadyDelivery', 'Listo para Reparto') : 'Listo para Reparto')
+                        : (window.t ? window.t('owner.btnReadyPickup', 'Listo para Recogida') : 'Listo para Recogida');
                     actionsHtml = `
-                        <button class="btn-action btn-status-next" onclick="updateStatus('${order.orderId}', '${nextSt}')">
-                            <i class="fa-solid fa-box"></i> ${isDelivery ? 'Listo para Reparto' : 'Listo para Recogida'}
+                        <button class="btn-action btn-status-next" onclick="updateStatus('${oid}', '${nextSt}')">
+                            <i class="fa-solid fa-box"></i> ${btnLabel}
                         </button>
                     `;
-                } else if (order.orderStatus === 'ready') {
+                } else if (effectiveSt === 'ready') {
                     actionsHtml = `
-                        <button class="btn-action btn-status-next" onclick="updateStatus('${order.orderId}', 'out_for_delivery')">
-                            <i class="fa-solid fa-motorcycle"></i> En Reparto
+                        <button class="btn-action btn-status-next" onclick="updateStatus('${oid}', 'out_for_delivery')">
+                            <i class="fa-solid fa-motorcycle"></i> ${window.t ? window.t('owner.btnOutForDelivery', 'En Reparto') : 'En Reparto'}
                         </button>
                     `;
-                } else if (order.orderStatus === 'out_for_delivery' || order.orderStatus === 'ready_for_pickup') {
+                } else if (effectiveSt === 'out_for_delivery' || effectiveSt === 'ready_for_pickup') {
                     actionsHtml = `
-                        <button class="btn-action btn-complete" onclick="updateStatus('${order.orderId}', 'completed')">
-                            <i class="fa-solid fa-check-double"></i> Marcar Entregado
+                        <button class="btn-action btn-complete" onclick="updateStatus('${oid}', 'completed')">
+                            <i class="fa-solid fa-check-double"></i> ${window.t ? window.t('owner.btnMarkDelivered', 'Marcar Entregado') : 'Marcar Entregado'}
                         </button>
                     `;
                 }
 
+                // Multilingual labels for badges and totals
+                const badgeDelivery = window.t ? window.t('owner.badgeDelivery', 'Reparto') : 'Reparto';
+                const badgePickup = window.t ? window.t('owner.badgePickup', 'Recogida') : 'Recogida';
+                const subtotalLabel = window.t ? window.t('owner.subtotalLabel', 'Subtotal:') : 'Subtotal:';
+                const deliveryLabel = window.t ? window.t('owner.deliveryLabel', 'Delivery:') : 'Delivery:';
+                const totalLabel = window.t ? window.t('owner.totalLabel', 'Total:') : 'Total:';
+                const notesLabel = window.t ? window.t('owner.notesLabel', 'Notas:') : 'Notas:';
+
+                const fee = (order.deliveryFee !== undefined) ? order.deliveryFee : (order.deliveryCost || 0);
+                const feeText = fee > 0 ? formatEuro(fee) : '0,00€';
+
+                const payMethod = order.paymentMethod === 'card'
+                    ? (window.t ? window.t('checkout.cardTitle', 'Tarjeta') : 'Tarjeta')
+                    : (window.t ? window.t('checkout.cashTitle', 'Efectivo') : 'Efectivo');
+
+                const addrContent = isDelivery
+                    ? (order.deliveryAddress || order.address || '-')
+                    : 'Calle Corredera 46, Local 3, Montilla (Córdoba)';
+
+                const instructions = order.deliveryInstructions || order.notes || '';
+
                 return `
-                    <div class="order-card status-${order.orderStatus}">
+                    <div class="order-card status-${effectiveSt}">
                         <div class="order-header">
                             <div class="order-id-group">
-                                <span class="order-id">#${order.orderId}</span>
+                                <span class="order-id">#${oid}</span>
                                 <span class="order-type-badge ${isDelivery ? 'delivery' : 'pickup'}">
-                                    <i class="fa-solid ${isDelivery ? 'fa-motorcycle' : 'fa-shop'}"></i> ${isDelivery ? 'Reparto' : 'Recogida'}
+                                    <i class="fa-solid ${isDelivery ? 'fa-motorcycle' : 'fa-shop'}"></i> ${isDelivery ? badgeDelivery : badgePickup}
                                 </span>
                             </div>
                             <span class="order-status-badge ${st.class}">${st.label}</span>
@@ -792,29 +983,24 @@
                         <div class="order-body">
                             <div class="order-cust-info">
                                 <div class="cust-name">
-                                    <span>${order.customerName} ${order.customerSurname || ''}</span>
+                                    <span>${order.customerName || ''} ${order.customerSurname || ''}</span>
                                     <div class="cust-contact-actions">
-                                        ${cleanPhone ? `<a href="tel:${cleanPhone}" class="cust-contact-btn btn-call" title="Llamar"><i class="fa-solid fa-phone"></i> Llamar</a>` : ''}
-                                        ${cleanPhone ? `<a href="https://wa.me/${cleanPhone.startsWith('34') ? cleanPhone : '34' + cleanPhone}" target="_blank" class="cust-contact-btn btn-wa" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i> Chat</a>` : ''}
+                                        ${cleanPhone ? `<a href="tel:${cleanPhone}" class="cust-contact-btn btn-call" title="${btnCallText}"><i class="fa-solid fa-phone"></i> ${btnCallText}</a>` : ''}
+                                        ${cleanPhone ? `<a href="https://wa.me/${cleanPhone.startsWith('34') ? cleanPhone : '34' + cleanPhone}" target="_blank" class="cust-contact-btn btn-wa" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i> ${btnChatText}</a>` : ''}
                                     </div>
                                 </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">
-                                    <i class="fa-regular fa-clock"></i> ${formatTime(order.createdAt)} • Pago: <strong>${order.paymentMethod === 'card' ? 'Tarjeta' : 'Efectivo'}</strong>
+                                <div class="order-meta-info">
+                                    <span><i class="fa-regular fa-clock"></i> ${formatTime(order.createdAt)}</span>
+                                    <span>•</span>
+                                    <span><i class="fa-regular fa-credit-card"></i> <strong>${payMethod}</strong></span>
                                 </div>
                             </div>
 
-                            ${isDelivery ? `
-                                <div class="order-address-box">
-                                    <strong><i class="fa-solid fa-location-dot"></i> Dirección:</strong> ${order.deliveryAddress}
-                                    ${order.deliveryInstructions ? `<div style="margin-top: 4px; font-style: italic; color: #B45309;"><i class="fa-solid fa-message"></i> ${order.deliveryInstructions}</div>` : ''}
-                                    ${mapLinkHtml}
-                                </div>
-                            ` : `
-                                <div class="order-address-box">
-                                    <strong><i class="fa-solid fa-shop"></i> Recogida en Local:</strong> Calle Corredera 46, Local 3
-                                    ${order.deliveryInstructions ? `<div style="margin-top: 4px; font-style: italic;"><i class="fa-solid fa-message"></i> ${order.deliveryInstructions}</div>` : ''}
-                                </div>
-                            `}
+                            <div class="order-address-box">
+                                <strong><i class="fa-solid ${isDelivery ? 'fa-location-dot' : 'fa-shop'}"></i> ${isDelivery ? badgeDelivery : badgePickup}:</strong> ${addrContent}
+                                ${instructions ? `<div style="margin-top: 5px; font-style: italic; color: #B45309;"><i class="fa-solid fa-message"></i> <strong>${notesLabel}</strong> ${instructions}</div>` : ''}
+                                ${mapLinkHtml}
+                            </div>
 
                             <div class="order-items-list">
                                 ${itemsHtml}
@@ -822,15 +1008,15 @@
 
                             <div class="order-totals">
                                 <div class="total-row">
-                                    <span>Subtotal:</span>
+                                    <span>${subtotalLabel}</span>
                                     <span>${formatEuro(order.subtotal)}</span>
                                 </div>
                                 <div class="total-row">
-                                    <span>Reparto:</span>
-                                    <span>${order.deliveryFee > 0 ? formatEuro(order.deliveryFee) : 'Gratis'}</span>
+                                    <span>${deliveryLabel}</span>
+                                    <span>${feeText}</span>
                                 </div>
                                 <div class="total-row total-final">
-                                    <span>TOTAL:</span>
+                                    <span>${totalLabel}</span>
                                     <span>${formatEuro(order.total)}</span>
                                 </div>
                             </div>
@@ -856,10 +1042,10 @@
                 if (data.success) {
                     fetchOrders();
                 } else {
-                    alert('Error: ' + (data.message || 'No se pudo actualizar el pedido'));
+                    alert('Error: ' + (data.message || (window.t ? window.t('owner.connectingError') : 'No se pudo actualizar el pedido')));
                 }
             } catch (e) {
-                alert('Error de conexión al actualizar pedido');
+                alert(window.t ? window.t('owner.connectingError', 'Error de conexión al actualizar pedido') : 'Error de conexión al actualizar pedido');
             }
         }
     </script>

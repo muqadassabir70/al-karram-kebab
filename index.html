@@ -44,9 +44,7 @@
             <span><i class="fa-solid fa-location-dot"></i> <span data-i18n="topBar.address">Calle Corredera 46, Local 3, Montilla (Córdoba)</span></span>
             <span class="dot-sep">•</span>
             <span><i class="fa-solid fa-motorcycle"></i> <span data-i18n="topBar.delivery" id="topBarDeliveryText">Domicilio: <strong>20:00 a 00:00 Noche</strong></span></span>
-            <span class="dot-sep">•</span>
-            <a href="owner.html" class="owner-portal-link" title="Panel de gestión de pedidos"><i class="fa-solid fa-shield-halved"></i> Panel Dueño</a>
-            <a href="javascript:void(0)" class="active-order-header-pill" id="headerActiveOrderPill" style="display:none;" title="Ver estado del pedido activo"><i class="fa-solid fa-receipt"></i> <span id="headerActiveOrderText">Ver mi Pedido</span></a>
+            <a href="javascript:void(0)" class="active-order-header-pill" id="headerActiveOrderPill" style="display:none;" title="Ver estado del pedido activo"><i class="fa-solid fa-receipt"></i> <span id="headerActiveOrderText" data-i18n="tracking.viewMyOrder">Ver mi Pedido</span></a>
         </div>
         <div class="top-bar-right">
             <span><i class="fa-solid fa-phone"></i> <span data-i18n="topBar.orders">Pedidos:</span> <a href="tel:611168163">611 168 163</a> / <a href="tel:611696343">611 696 343</a>
@@ -606,40 +604,40 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="custName"><span data-i18n="checkout.nameLabel">Nombre</span> <span class="required">*</span></label>
-                        <input type="text" id="custName" placeholder="Tu nombre" required>
-                        <span class="error-msg" id="custNameError">Introduce tu nombre</span>
+                        <input type="text" id="custName" placeholder="Tu nombre" data-i18n="checkout.namePlaceholder" data-i18n-attr="placeholder" required>
+                        <span class="error-msg" id="custNameError" data-i18n="checkout.nameError">Introduce tu nombre</span>
                     </div>
                     <div class="form-group">
                         <label for="custSurname" data-i18n="checkout.surnameLabel">Apellidos</label>
-                        <input type="text" id="custSurname" placeholder="Tus apellidos">
+                        <input type="text" id="custSurname" placeholder="Tus apellidos" data-i18n="checkout.surnamePlaceholder" data-i18n-attr="placeholder">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="custPhone"><span data-i18n="checkout.phoneLabel">Teléfono de contacto</span> <span class="required">*</span></label>
-                    <input type="tel" id="custPhone" placeholder="Ej: 611 168 163" required>
-                    <span class="error-msg" id="custPhoneError">Introduce un teléfono de contacto válido</span>
+                    <input type="tel" id="custPhone" placeholder="Ej: 611 168 163" data-i18n="checkout.phonePlaceholder" data-i18n-attr="placeholder" required>
+                    <span class="error-msg" id="custPhoneError" data-i18n="checkout.phoneError">Introduce un teléfono de contacto válido</span>
                 </div>
             </div>
 
             <!-- Address (Conditional for delivery) -->
             <div class="form-section" id="addressSection">
-                <label class="form-section-title" data-i18n="checkout.step3">3. Dirección de entrega en Montilla</label>
+                <label class="form-section-title" data-i18n="location.stepTitle">3. Dirección de entrega en Montilla</label>
 
                 <!-- KFC-style Geolocation Detector Card -->
                 <div class="location-detector-card">
                     <div class="loc-detect-top">
                         <button type="button" class="btn-detect-loc" id="btnDetectLocation">
-                            <i class="fa-solid fa-crosshairs"></i> <span>Detectar mi ubicación actual</span>
+                            <i class="fa-solid fa-crosshairs"></i> <span data-i18n="location.detectBtn">Detectar mi ubicación actual</span>
                         </button>
-                        <span class="loc-hint"><i class="fa-solid fa-location-dot"></i> Montilla (Córdoba)</span>
+                        <span class="loc-hint"><i class="fa-solid fa-location-dot"></i> <span data-i18n="location.cityBadge">Montilla (Córdoba)</span></span>
                     </div>
 
                     <div class="location-status-box" id="locationStatusBox" style="display: none;">
                         <div class="loc-status-header">
-                            <span class="loc-badge" id="locBadgeStatus"><i class="fa-solid fa-circle-check"></i> Ubicación detectada</span>
+                            <span class="loc-badge" id="locBadgeStatus"><i class="fa-solid fa-circle-check"></i> <span data-i18n="location.detected">Ubicación detectada</span></span>
                             <button type="button" class="btn-change-loc" id="btnToggleChangeLoc">
-                                <i class="fa-solid fa-pen-to-square"></i> Cambiar ubicación
+                                <i class="fa-solid fa-pen-to-square"></i> <span data-i18n="location.changeBtn">Cambiar ubicación</span>
                             </button>
                         </div>
                         <div class="loc-detected-address" id="detectedAddressSpan">Calle Corredera 46, Montilla</div>
@@ -647,9 +645,9 @@
 
                     <div class="change-loc-panel" id="changeLocPanel" style="display: none;">
                         <div class="loc-search-row">
-                            <input type="text" id="manualLocationInput" placeholder="Escribe tu calle o punto en Montilla (ej: Av. Andalucía 12)...">
+                            <input type="text" id="manualLocationInput" placeholder="Escribe tu calle o punto en Montilla (ej: Av. Andalucía 12)..." data-i18n="location.searchPlaceholder" data-i18n-attr="placeholder">
                             <button type="button" class="btn-loc-search" id="btnSearchAddress">
-                                <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                                <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="location.searchBtn">Buscar</span>
                             </button>
                         </div>
                     </div>
@@ -658,24 +656,24 @@
                         <div id="deliveryMap" style="width: 100%; height: 100%;"></div>
                     </div>
                     <div class="loc-map-help" id="locMapHelp" style="display: none;">
-                        <i class="fa-solid fa-hand-pointer"></i> Arrastra el marcador en el mapa para afinar tu portal exacto.
+                        <i class="fa-solid fa-hand-pointer"></i> <span data-i18n="location.mapHint">Arrastra el marcador en el mapa para afinar tu portal exacto.</span>
                     </div>
 
                     <div class="loc-confirm-banner" id="locConfirmBanner" style="display: none; margin-top: 10px;">
                         <div>
-                            <strong><i class="fa-solid fa-map-pin"></i> Ubicación:</strong>
+                            <strong><i class="fa-solid fa-map-pin"></i> <span data-i18n="location.selectedLabel">Ubicación:</span></strong>
                             <span id="confirmedAddressText">-</span>
                         </div>
                         <button type="button" class="btn-confirm-loc" id="btnConfirmLocation">
-                            <i class="fa-solid fa-check"></i> Confirmar ubicación
+                            <i class="fa-solid fa-check"></i> <span data-i18n="location.confirmBtn">Confirmar ubicación</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 14px;">
                     <label for="custAddress"><span data-i18n="checkout.addressLabel">Calle, Número, Piso y Puerta</span> <span class="required">*</span></label>
-                    <input type="text" id="custAddress" placeholder="Ej: Calle Corredera, 12, 2ºB">
-                    <span class="error-msg" id="custAddressError">Introduce la dirección de entrega</span>
+                    <input type="text" id="custAddress" placeholder="Ej: Calle Corredera, 12, 2ºB" data-i18n="checkout.addressPlaceholder" data-i18n-attr="placeholder">
+                    <span class="error-msg" id="custAddressError" data-i18n="checkout.addressError">Introduce la dirección de entrega</span>
                 </div>
 
                 <div class="form-row">
@@ -700,7 +698,7 @@
                             <i class="fa-solid fa-money-bill-wave"></i>
                             <div>
                                 <strong data-i18n="checkout.cashTitle">Pago en Efectivo</strong>
-                                <span>Paga directamente al repartidor o en el local</span>
+                                <span data-i18n="checkout.cashSub">Paga directamente al repartidor o en el local</span>
                             </div>
                         </div>
                     </label>
@@ -710,7 +708,7 @@
                             <i class="fa-solid fa-credit-card"></i>
                             <div>
                                 <strong data-i18n="checkout.cardTitle">Pago con Tarjeta</strong>
-                                <span>Datáfono en el reparto o en el local</span>
+                                <span data-i18n="checkout.cardSub">Datáfono en el reparto o en el local</span>
                             </div>
                         </div>
                     </label>
@@ -721,7 +719,7 @@
             <div class="form-section">
                 <div class="form-group">
                     <label for="custNotes" data-i18n="checkout.notesLabel">Notas o comentarios para la cocina / repartidor (Opcional)</label>
-                    <textarea id="custNotes" rows="2" placeholder="Ej: Sin picante, salsa blanca aparte, llamar al timbre..."></textarea>
+                    <textarea id="custNotes" rows="2" placeholder="Ej: Sin picante, salsa blanca aparte, llamar al timbre..." data-i18n="checkout.notesPlaceholder" data-i18n-attr="placeholder"></textarea>
                 </div>
             </div>
 
@@ -736,7 +734,7 @@
                     <strong id="checkoutFinalTotal">0,00€</strong>
                 </div>
                 <p class="checkout-review-note">
-                    <i class="fa-solid fa-circle-info"></i> Revisa los detalles del pedido antes de confirmar.
+                    <i class="fa-solid fa-circle-info"></i> <span data-i18n="checkout.reviewNote">Revisa los detalles del pedido antes de confirmar.</span>
                 </p>
             </div>
 
@@ -760,38 +758,38 @@
             <i class="fa-solid fa-circle-check"></i>
         </div>
         <h2 data-i18n="confirmation.title">¡Pedido realizado correctamente!</h2>
-        <p class="conf-sub">El equipo de <strong>Al Karram Kebab</strong> ha recibido tu pedido y se pondrá a prepararlo de inmediato.</p>
+        <p class="conf-sub" data-i18n="confirmation.subtitle">El equipo de <strong>Al Karram Kebab</strong> ha recibido tu pedido y se pondrá a prepararlo de inmediato.</p>
 
         <!-- Live Order Tracking Stepper -->
         <div class="order-tracking-card" id="orderTrackingCard">
             <div class="tracking-card-header">
-                <span class="tracking-title"><i class="fa-solid fa-route"></i> Estado del Pedido en Tiempo Real</span>
-                <span class="tracking-live-pill"><span class="pulse-dot"></span> En vivo</span>
+                <span class="tracking-title"><i class="fa-solid fa-route"></i> <span data-i18n="tracking.title">Estado del Pedido en Tiempo Real</span></span>
+                <span class="tracking-live-pill"><span class="pulse-dot"></span> <span data-i18n="tracking.live">En vivo</span></span>
             </div>
             <div class="tracking-stepper" id="trackingStepper">
                 <div class="tracking-step active" id="step-submitted">
                     <div class="step-icon-wrap"><i class="fa-solid fa-clipboard-check"></i></div>
-                    <div class="step-label">Recibido</div>
+                    <div class="step-label" data-i18n="tracking.stepSubmitted">Recibido</div>
                 </div>
                 <div class="tracking-step" id="step-accepted">
                     <div class="step-icon-wrap"><i class="fa-solid fa-thumbs-up"></i></div>
-                    <div class="step-label">Aceptado</div>
+                    <div class="step-label" data-i18n="tracking.stepAccepted">Aceptado</div>
                 </div>
                 <div class="tracking-step" id="step-preparing">
                     <div class="step-icon-wrap"><i class="fa-solid fa-fire-burner"></i></div>
-                    <div class="step-label">En Cocina</div>
+                    <div class="step-label" data-i18n="tracking.stepPreparing">En Cocina</div>
                 </div>
                 <div class="tracking-step" id="step-transit">
                     <div class="step-icon-wrap" id="transitIconWrap"><i class="fa-solid fa-motorcycle" id="transitStepIcon"></i></div>
-                    <div class="step-label" id="transitStepLabel">En Reparto</div>
+                    <div class="step-label" id="transitStepLabel" data-i18n="tracking.stepTransit">En Reparto</div>
                 </div>
                 <div class="tracking-step" id="step-completed">
                     <div class="step-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
-                    <div class="step-label">Entregado</div>
+                    <div class="step-label" data-i18n="tracking.stepCompleted">Entregado</div>
                 </div>
             </div>
             <div class="tracking-refresh-hint" id="trackingRefreshHint">
-                <i class="fa-solid fa-rotate fa-spin"></i> Conectado con Al Karram Kebab en directo
+                <i class="fa-solid fa-rotate fa-spin"></i> <span data-i18n="tracking.connecting">Conectado con Al Karram Kebab en directo</span>
             </div>
         </div>
 

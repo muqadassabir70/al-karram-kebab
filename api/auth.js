@@ -7,8 +7,12 @@ function getSecret() {
     return process.env.JWT_SECRET || 'alkarram_super_secret_jwt_key_2026';
 }
 
+function getOwnerEmail() {
+    return (process.env.OWNER_EMAIL || 'owner@alkarramkebab.com').trim().toLowerCase();
+}
+
 function getOwnerPassword() {
-    return process.env.OWNER_PASSWORD || 'alkarram2026';
+    return (process.env.OWNER_PASSWORD || 'alkarram2026').trim();
 }
 
 function createToken(payload) {
@@ -71,23 +75,30 @@ module.exports = async function handler(req, res) {
 
     if (req.method === 'POST') {
         const body = await parseJsonBody(req);
+        const email = (body && body.email) ? String(body.email).trim().toLowerCase() : '';
         const password = (body && body.password) ? String(body.password).trim() : '';
+        const correctEmail = getOwnerEmail();
         const correctPassword = getOwnerPassword();
 
-        if (!password || password !== correctPassword) {
-            return sendJson(res, 401, { success: false, message: 'Contraseña de propietario incorrecta' });
+        if (email && email !== correctEmail) {
+            return sendJson(res, 401, { success: false, message: 'Credenciales de propietario incorrectas' });
         }
 
-        const token = createToken({ role: 'owner', loginTime: Date.now() });
+        if (!password || password !== correctPassword) {
+            return sendJson(res, 401, { success: false, message: 'Credenciales de propietario incorrectas' });
+        }
+
+        const token = createToken({ role: 'owner', email: correctEmail, loginTime: Date.now() });
         return sendJson(res, 200, {
             success: true,
             token,
+            email: correctEmail,
             message: 'Autenticación correcta'
         });
     }
 
     if (req.method === 'GET') {
-        const authHeader = req.headers['authorization'] || '';
+        const authHeader = (req && req.headers && (req.headers['authorization'] || req.headers['Authorization'])) || '';
         const token = authHeader.replace(/^Bearer\s+/i, '').trim();
         const verified = verifyToken(token);
 

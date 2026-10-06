@@ -31,10 +31,10 @@ function sendJson(res, statusCode, data) {
 }
 
 function checkOwnerAuth(req) {
-    const authHeader = req.headers['authorization'] || '';
+    const authHeader = (req && req.headers && (req.headers['authorization'] || req.headers['Authorization'])) || '';
     const token = authHeader.replace(/^Bearer\s+/i, '').trim();
     const verified = verifyToken(token);
-    return verified && verified.role === 'owner';
+    return Boolean(verified && verified.role === 'owner');
 }
 
 module.exports = async function handler(req, res) {
