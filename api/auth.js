@@ -8,11 +8,13 @@ function getSecret() {
 }
 
 function getOwnerEmail() {
-    return (process.env.OWNER_EMAIL || 'owner@alkarramkebab.com').trim().toLowerCase();
+    const raw = process.env.OWNER_EMAIL || 'owner@alkarramkebab.com';
+    return String(raw).trim().toLowerCase().replace(/^["']|["']$/g, '');
 }
 
 function getOwnerPassword() {
-    return (process.env.OWNER_PASSWORD || 'alkarram2026').trim();
+    const raw = process.env.OWNER_PASSWORD || 'alkarram2026';
+    return String(raw).trim().replace(/^["']|["']$/g, '');
 }
 
 function createToken(payload) {
@@ -77,22 +79,25 @@ module.exports = async function handler(req, res) {
         const body = await parseJsonBody(req);
         const email = (body && body.email) ? String(body.email).trim().toLowerCase() : '';
         const password = (body && body.password) ? String(body.password).trim() : '';
-        const correctEmail = getOwnerEmail();
+        const configuredEmail = getOwnerEmail();
         const correctPassword = getOwnerPassword();
 
-        if (email && email !== correctEmail) {
+        // If OWNER_EMAIL was explicitly defined by user in env, enforce it
+        if (process.env.OWNER_EMAIL && email && email !== configuredEmail) {
             return sendJson(res, 401, { success: false, message: 'Credenciales de propietario incorrectas' });
         }
 
+        // Validate password
         if (!password || password !== correctPassword) {
             return sendJson(res, 401, { success: false, message: 'Credenciales de propietario incorrectas' });
         }
 
-        const token = createToken({ role: 'owner', email: correctEmail, loginTime: Date.now() });
+        const effectiveEmail = email || configuredEmail;
+        const token = createToken({ role: 'owner', email: effectiveEmail, loginTime: Date.now() });
         return sendJson(res, 200, {
             success: true,
             token,
-            email: correctEmail,
+            email: effectiveEmail,
             message: 'Autenticación correcta'
         });
     }

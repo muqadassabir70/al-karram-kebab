@@ -433,7 +433,12 @@
                 </div>
                 <div class="form-group">
                     <label for="ownerPassword" data-i18n="owner.passwordLabel">Contraseña de Acceso</label>
-                    <input type="password" id="ownerPassword" placeholder="Introduce la contraseña" data-i18n="owner.passwordPlaceholder" data-i18n-attr="placeholder" required autocomplete="current-password">
+                    <div style="position: relative;">
+                        <input type="password" id="ownerPassword" placeholder="Introduce la contraseña" data-i18n="owner.passwordPlaceholder" data-i18n-attr="placeholder" required autocomplete="current-password" style="padding-right: 42px;">
+                        <button type="button" id="togglePasswordVisibility" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer; font-size: 15px; padding: 4px;" title="Ver / Ocultar contraseña" aria-label="Toggle password visibility">
+                            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="btn-login" id="loginBtn" data-i18n="owner.loginBtn">Entrar al Panel</button>
                 <div class="login-error" id="loginError" data-i18n="owner.loginError">Credenciales incorrectas. Inténtalo de nuevo.</div>
@@ -635,6 +640,23 @@
         if (dashLangSelect) {
             dashLangSelect.value = savedLang;
             dashLangSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+        }
+
+        const togglePassBtn = document.getElementById('togglePasswordVisibility');
+        if (togglePassBtn) {
+            togglePassBtn.addEventListener('click', () => {
+                const passInput = document.getElementById('ownerPassword');
+                const icon = document.getElementById('togglePasswordIcon');
+                if (passInput && icon) {
+                    if (passInput.type === 'password') {
+                        passInput.type = 'text';
+                        icon.className = 'fa-solid fa-eye-slash';
+                    } else {
+                        passInput.type = 'password';
+                        icon.className = 'fa-solid fa-eye';
+                    }
+                }
+            });
         }
 
         // Apply translations initially
