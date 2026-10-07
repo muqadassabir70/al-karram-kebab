@@ -88,8 +88,14 @@ module.exports = async function handler(req, res) {
         const configuredPassword = getOwnerPassword();
         const secret = getSecret();
 
+        const missing = [];
+        if (!configuredEmail) missing.push('OWNER_EMAIL');
+        if (!configuredPassword) missing.push('OWNER_PASSWORD');
+        if (!secret) missing.push('JWT_SECRET');
+
         // If OWNER_EMAIL, OWNER_PASSWORD, or JWT_SECRET is missing, fail safely with 500
-        if (!configuredEmail || !configuredPassword || !secret) {
+        if (missing.length > 0) {
+            res.setHeader('X-Missing-Config', missing.join(','));
             return sendJson(res, 500, {
                 success: false,
                 message: 'Owner authentication is not configured'
