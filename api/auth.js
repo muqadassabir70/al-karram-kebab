@@ -4,14 +4,12 @@
 const crypto = require('crypto');
 
 function getSecret() {
-    const raw = process.env.JWT_SECRET;
-    if (!raw) return null;
+    const raw = process.env.JWT_SECRET || 'alkarram_super_secret_jwt_key_2026';
     return String(raw).trim().replace(/^["']|["']$/g, '');
 }
 
 function getOwnerEmail() {
-    const raw = process.env.OWNER_EMAIL;
-    if (!raw) return null;
+    const raw = process.env.OWNER_EMAIL || 'owner@alkarramkebab.com';
     return String(raw).trim().toLowerCase().replace(/^["']|["']$/g, '');
 }
 
